@@ -1,0 +1,208 @@
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 40px 0;
+}
+
+.about-header h1 {
+  font-size: 3em;
+  color: #031e4d;
+  font-weight: 700;
+  margin-bottom: 15px;
+  letter-spacing: -0.5px;
+}
+
+.about-header p {
+  font-size: 1.3em;
+  color: #666;
+  font-weight: 300;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.about-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 60px;
+  gap: 40px;
+  padding: 30px 0;
+}
+
+.about-section.reverse {
+  flex-direction: row-reverse;
+}
+
+.about-text {
+  flex: 1;
+  padding: 20px;
+}
+
+.about-text h2 {
+  font-size: 2.2em;
+  color: #031e4d;
+  margin-bottom: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.about-text p {
+  font-size: 1.1em;
+  color: #333;
+  line-height: 1.7;
+  margin-bottom: 15px;
+  font-weight: 400;
+}
+
+.about-image {
+  flex: 1;
+  padding: 20px;
+}
+
+.about-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-image img:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.advantages-grid {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
+.advantage-item {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.advantage-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.advantage-item h4 {
+  font-size: 1.3em;
+  color: #031e4d;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.advantage-item p {
+  font-size: 1em;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .about-container {
+    padding: 15px;
+  }
+
+  .about-section {
+    gap: 30px;
+    margin-bottom: 50px;
+  }
+
+  .about-header h1 {
+    font-size: 2.5em;
+  }
+
+  .about-text h2 {
+    font-size: 2em;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-section {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .about-section.reverse {
+    flex-direction: column;
+  }
+
+  .about-header h1 {
+    font-size: 2.2em;
+  }
+
+  .about-header p {
+    font-size: 1.1em;
+    padding: 0 20px;
+  }
+
+  .about-text h2 {
+    font-size: 1.8em;
+  }
+
+  .about-text p {
+    font-size: 1em;
+  }
+
+  .about-text,
+  .about-image {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-container {
+    padding: 10px;
+  }
+
+  .about-header {
+    margin-bottom: 30px;
+    padding: 20px 0;
+  }
+
+  .about-header h1 {
+    font-size: 1.8em;
+  }
+
+  .about-header p {
+    font-size: 1em;
+  }
+
+  .about-section {
+    gap: 15px;
+    margin-bottom: 40px;
+    padding: 20px 0;
+  }
+
+  .about-text h2 {
+    font-size: 1.5em;
+  }
+
+  .about-text p {
+    font-size: 0.95em;
+  }
+
+  .advantage-item {
+    padding: 15px;
+  }
+
+  .advantage-item h4 {
+    font-size: 1.1em;
+  }
+}
