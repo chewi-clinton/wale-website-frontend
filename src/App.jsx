@@ -17,6 +17,7 @@ import CheckoutPage from "./Pages/Checkout.jsx";
 import AboutPage from "./Pages/About.jsx";
 import Cart from "./Components/Cart.jsx";
 import Home from "./Pages/Home.jsx";
+import ProductDetail from "./Pages/ProductDetails.jsx";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -39,6 +40,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/product-details" element={<ProductDetail />} />
             <Route path="/privacypolicy" element={<PrivacyPolicy />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/about-us" element={<AboutPage />} />
