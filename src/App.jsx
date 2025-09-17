@@ -12,6 +12,7 @@ import ShippingPolicy from "./Pages/ShippingPolicy.jsx";
 import CheckoutPage from "./Pages/Checkout.jsx";
 import AboutPage from "./Pages/About.jsx";
 import Cart from "./Components/Cart.jsx";
+import Home from "./Pages/Home.jsx";
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
         <Header />
         <main>
           <Routes>
-            <Route path="/" element={<ShopPage />} />
+            <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/privacypolicy" element={<PrivacyPolicy />} />
             <Route path="/checkout" element={<CheckoutPage />} />
