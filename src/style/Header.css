@@ -17,18 +17,21 @@
 }
 
 .marquee {
-  display: block;
-  width: 100%;
+  display: inline-block;
   white-space: nowrap;
-  animation: marquee 20s linear infinite;
+  animation: marquee 12s linear infinite;
+  padding-left: 100%;
 }
-
+.marquee::after {
+  content: "FREE SHIPPING FOR OUR MEMBERS • 24/7 AVAILABLE • FAST SHIPPING";
+  padding-left: 30px;
+}
 @keyframes marquee {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(0);
   }
   100% {
-    transform: translateX(100%);
+    transform: translateX(-100%);
   }
 }
 

@@ -18,7 +18,7 @@ const AboutPage = () => {
     {
       title: "Our Heritage",
       content:
-        "Established in 2010, Prime Time Pharmacy has transformed from a community-focused establishment into a premier healthcare provider offering comprehensive pharmaceutical services. Our sustained commitment to innovation, patient safety, and clinical excellence has positioned us as a trusted leader in modern healthcare delivery.",
+        "Established in 2010,TRIMAXA Pharmacy has transformed from a community-focused establishment into a premier healthcare provider offering comprehensive pharmaceutical services. Our sustained commitment to innovation, patient safety, and clinical excellence has positioned us as a trusted leader in modern healthcare delivery.",
       image: aboutImage2,
       reverse: true,
     },
@@ -76,7 +76,7 @@ const AboutPage = () => {
   return (
     <div className="about-container">
       <header className="about-header">
-        <h1>Prime Time Pharmacy</h1>
+        <h1>TRIMAXA Pharmacy</h1>
         <p>
           Advanced pharmaceutical care dedicated to excellence in health
           outcomes and patient satisfaction.
@@ -102,17 +102,16 @@ const AboutPage = () => {
         <div className="about-text">
           <h2>Our Core Specializations</h2>
           <p>
-            Prime Time Pharmacy delivers specialized pharmaceutical services
-            across three essential healthcare domains, providing
-            precision-targeted solutions that address critical health management
-            requirements.
+            TRIMAXA Pharmacy delivers specialized pharmaceutical services across
+            three essential healthcare domains, providing precision-targeted
+            solutions that address critical health management requirements.
           </p>
         </div>
       </section>
 
       <section className="about-section reverse">
         <div className="about-text">
-          <h2>The Prime Time Advantage</h2>
+          <h2>The TRIMAXA Advantage</h2>
           <p>
             As your strategic healthcare partner, we transcend traditional
             pharmaceutical services by delivering comprehensive solutions backed
@@ -128,7 +127,7 @@ const AboutPage = () => {
           </div>
         </div>
         <div className="about-image">
-          <img src={aboutImage4} alt="Prime Time Advantage" />
+          <img src={aboutImage4} alt="TRIMAXA Advantage" />
         </div>
       </section>
 
@@ -136,7 +135,7 @@ const AboutPage = () => {
         <div className="about-text">
           <h2>Our Commitment</h2>
           <p>
-            Prime Time Pharmacy stands as a premier USA-based pharmaceutical
+            TRIMAXA Pharmacy stands as a premier USA-based pharmaceutical
             institution dedicated to advancing accessible healthcare through
             innovative solutions. Our specialized focus encompasses weight
             management, diabetes care, and comprehensive wellness programs, all

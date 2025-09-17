@@ -1,7 +1,11 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import ShopPage from "./Pages/ShopPage.jsx";
-
 import OrderConfirmationPage from "./Pages/OrderConfirmationPage.jsx";
 import "./App.css";
 import Header from "./Components/Header.jsx";
@@ -14,14 +18,26 @@ import AboutPage from "./Pages/About.jsx";
 import Cart from "./Components/Cart.jsx";
 import Home from "./Pages/Home.jsx";
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
     <Router>
       <div className="app">
         <Header />
+        <ScrollToTop />
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/shop" element={<ShopPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/privacypolicy" element={<PrivacyPolicy />} />
             <Route path="/checkout" element={<CheckoutPage />} />

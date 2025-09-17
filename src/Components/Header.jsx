@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../style/Header.css";
-// Import your logo
 import logo from "../assets/Trimaxalogo.png";
 
 const Header = () => {
@@ -12,36 +12,34 @@ const Header = () => {
 
   return (
     <>
-      {/* Top banner with marquee effect */}
       <div className="top-banner">
-        <div className="marquee">FREE SHIPPING FOR OUR MEMBERS</div>
+        <div className="marquee">
+          FREE SHIPPING FOR OUR MEMBERS • 24/7 AVAILABLE • FAST SHIPPING
+        </div>
       </div>
 
-      {/* Main header */}
       <header className="main-header">
         <div className="header-container">
-          {/* Logo section - shifted more to the left */}
           <div className="logo-section">
             <div className="logo">
-              <img src={logo} alt="Timaxa Logo" />
+              <img src={logo} alt="Trimaxa Logo" />
             </div>
             <h1 className="brand-name">TRIMAXA PHARMACY</h1>
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="desktop-nav">
             <ul className="nav-list">
               <li>
-                <a href="#homes">HOME</a>
+                <Link to="/">HOME</Link>
               </li>
               <li>
-                <a href="#shop">SHOP</a>
+                <Link to="/shop">SHOP</Link>
               </li>
               <li>
-                <a href="#about">ABOUT US</a>
+                <Link to="/about-us">ABOUT US</Link>
               </li>
               <li>
-                <a href="#promo">PROMO</a>
+                <Link to="/promo">PROMO</Link>
               </li>
             </ul>
           </nav>
@@ -98,7 +96,6 @@ const Header = () => {
               </button>
             </div>
 
-            {/* Mobile menu button */}
             <button
               className={`mobile-menu-btn ${isMenuOpen ? "active" : ""}`}
               onClick={toggleMenu}
@@ -110,42 +107,41 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         <nav className={`mobile-nav ${isMenuOpen ? "active" : ""}`}>
           <ul className="mobile-nav-list">
             <li>
-              <a href="#homes" onClick={toggleMenu}>
-                HOMES
-              </a>
+              <Link to="/" onClick={toggleMenu}>
+                HOME
+              </Link>
             </li>
             <li>
-              <a href="#shop" onClick={toggleMenu}>
+              <Link to="/shop" onClick={toggleMenu}>
                 SHOP
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#about" onClick={toggleMenu}>
+              <Link to="/about-us" onClick={toggleMenu}>
                 ABOUT US
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#contacts" onClick={toggleMenu}>
-                CONTACTS
-              </a>
+              <Link to="/contact" onClick={toggleMenu}>
+                CONTACT
+              </Link>
             </li>
             <li>
-              <a href="#faq" onClick={toggleMenu}>
+              <Link to="/faq" onClick={toggleMenu}>
                 FAQ
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#promo" onClick={toggleMenu}>
+              <Link to="/promo" onClick={toggleMenu}>
                 PROMO
-              </a>
+              </Link>
             </li>
           </ul>
           <div className="mobile-contact-info">
-            <p>INFO@TIMAXA.COM</p>
+            <p>INFO@TRIMAXA.COM</p>
             <p>MON-FRI: 10:00 - 18:00</p>
           </div>
         </nav>

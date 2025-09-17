@@ -1,4 +1,4 @@
-footer {
+.footer {
   background-color: #031e4d;
   color: white;
   font-family: Arial, sans-serif;
@@ -8,7 +8,6 @@ footer {
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
-  margin-top: 20px;
 }
 
 .footer-content {
@@ -50,7 +49,7 @@ footer {
 }
 
 .footer-contact a {
-  color: #26b;
+  color: #26b5fc;
   text-decoration: none;
   position: relative;
   transition: color 0.3s ease;
@@ -132,6 +131,5 @@ footer {
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    margin-top: 20px;
   }
 }

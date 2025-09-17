@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "../style/Footer.css";
 import logo from "../assets/Trimaxalogo.png";
 
@@ -28,22 +29,22 @@ const Footer = () => {
           <h4>Quick Links</h4>
           <ul>
             <li>
-              <a href="#">Home</a>
+              <Link to="/">Home</Link>
             </li>
             <li>
-              <a href="#">About Us</a>
+              <Link to="/about-us">About Us</Link>
             </li>
             <li>
-              <a href="#">Medical Weight Loss</a>
+              <Link to="/shop">Medical Weight Loss</Link>
             </li>
             <li>
-              <a href="#">Diabetes Supplies</a>
+              <Link to="/shop">Diabetes Supplies</Link>
             </li>
             <li>
-              <a href="#">Pain Killers</a>
+              <Link to="/shop">Pain Killers</Link>
             </li>
             <li>
-              <a href="#">Insulin</a>
+              <Link to="/shop">Insulin</Link>
             </li>
             <li>
               <a href="#">Contact Us</a>
@@ -57,19 +58,19 @@ const Footer = () => {
           <h4>Useful Links</h4>
           <ul>
             <li>
-              <a href="#">Shop</a>
+              <Link to="/shop">Shop</Link>
             </li>
             <li>
-              <a href="#">Cart</a>
+              <Link to="/cart">Cart</Link>
             </li>
             <li>
-              <a href="#">Refund Policy</a>
+              <Link to="/refundandreturn">Refund Policy</Link>
             </li>
             <li>
-              <a href="#">Shipping Policy</a>
+              <Link to="/shippingpolicy">Shipping Policy</Link>
             </li>
             <li>
-              <a href="#">Privacy Policy</a>
+              <Link to="/privacypolicy">Privacy Policy</Link>
             </li>
           </ul>
         </div>
@@ -77,17 +78,16 @@ const Footer = () => {
           <h4>Categories</h4>
           <ul>
             <li>
-              <a href="#">Medical Weight Loss</a>
+              <Link to="/shop">Medical Weight Loss</Link>
             </li>
             <li>
-              <a href="#">Diabetes Supplies</a>
-            </li>
-
-            <li>
-              <a href="#">Pain Killers</a>
+              <Link to="/shop">Diabetes Supplies</Link>
             </li>
             <li>
-              <a href="#">Insulin</a>
+              <Link to="/shop">Pain Killers</Link>
+            </li>
+            <li>
+              <Link to="/shop">Insulin</Link>
             </li>
           </ul>
         </div>
