@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import ShopPage from "./Pages/ShopPage.jsx";
 import OrderConfirmationPage from "./Pages/OrderConfirmationPage.jsx";
@@ -18,6 +19,7 @@ import AboutPage from "./Pages/About.jsx";
 import Cart from "./Components/Cart.jsx";
 import Home from "./Pages/Home.jsx";
 import ProductDetail from "./Pages/ProductDetails.jsx";
+import AgeVerification from "./Pages/AgeVerification.jsx";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -29,6 +31,12 @@ function ScrollToTop() {
   return null;
 }
 
+// Protect all routes unless user has verified age
+const ProtectedRoute = ({ children }) => {
+  const ageVerified = localStorage.getItem("ageVerified");
+  return ageVerified ? children : <Navigate to="/age-check" />;
+};
+
 function App() {
   return (
     <Router>
@@ -37,21 +45,88 @@ function App() {
         <ScrollToTop />
         <main>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/shop" element={<ShopPage />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/product-details" element={<ProductDetail />} />
-            <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/about-us" element={<AboutPage />} />
-            <Route path="/shippingpolicy" element={<ShippingPolicy />} />
+            {/* Age verification page */}
+            <Route path="/age-check" element={<AgeVerification />} />
+
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shop"
+              element={
+                <ProtectedRoute>
+                  <ShopPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <ProtectedRoute>
+                  <Cart />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-details"
+              element={
+                <ProtectedRoute>
+                  <ProductDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/privacypolicy"
+              element={
+                <ProtectedRoute>
+                  <PrivacyPolicy />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/about-us"
+              element={
+                <ProtectedRoute>
+                  <AboutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shippingpolicy"
+              element={
+                <ProtectedRoute>
+                  <ShippingPolicy />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/refundandreturn"
-              element={<RefundAndReturnsPolicy />}
+              element={
+                <ProtectedRoute>
+                  <RefundAndReturnsPolicy />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/order-confirmation"
-              element={<OrderConfirmationPage />}
+              element={
+                <ProtectedRoute>
+                  <OrderConfirmationPage />
+                </ProtectedRoute>
+              }
             />
           </Routes>
         </main>

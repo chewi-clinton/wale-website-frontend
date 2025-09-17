@@ -6,7 +6,7 @@ import Partner1 from "../assets/Partner1.png";
 import Partner2 from "../assets/Partner2.png";
 import Partner3 from "../assets/Partner.png";
 import Partner4 from "../assets/Partner4.png";
-import Partner5 from "../assets/Partner5.png";
+import Partner5 from "../assets/Partner5.webp";
 import WeightManagement from "../assets/weightmanagement.jpg";
 import DiabetesCare from "../assets/Diabetescare.jpg";
 import Wellness from "../assets/painkiller.jpg";

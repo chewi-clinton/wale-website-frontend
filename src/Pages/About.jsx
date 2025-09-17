@@ -147,7 +147,6 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Google Map Section */}
       <section className="map-section">
         <h2>Find Us Here</h2>
         <div className="map-container">
