@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import "../style/Header.css";
 import logo from "../assets/Trimaxalogo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { getCartCount } = useCart();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -81,7 +83,7 @@ const Header = () => {
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                 </svg>
               </button>
-              <button className="icon-btn">
+              <Link to="/cart" className="icon-btn cart-icon">
                 <svg
                   width="20"
                   height="20"
@@ -93,7 +95,10 @@ const Header = () => {
                   <line x1="3" y1="6" x2="21" y2="6" />
                   <path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
-              </button>
+                {getCartCount() > 0 && (
+                  <span className="cart-count">{getCartCount()}</span>
+                )}
+              </Link>
             </div>
 
             <button

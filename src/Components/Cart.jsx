@@ -1,72 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import "../style/Cart.css";
-import aboutImage3 from "../assets/image5.png";
-import aboutImage4 from "../assets/image4.png";
-import diabetesimg from "../assets/image3.png";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
-
-  const mockCartItems = [
-    {
-      id: 1,
-      name: "Advanced Weight Management Formula",
-      price: 49.99,
-      quantity: 2,
-      image: aboutImage3,
-      category: "Weight Loss",
-      inStock: true,
-      prescription: false,
-    },
-    {
-      id: 2,
-      name: "Premium Insulin Solution",
-      price: 89.99,
-      quantity: 1,
-      image: aboutImage4,
-      category: "Diabetes Care",
-      inStock: true,
-      prescription: true,
-    },
-    {
-      id: 3,
-      name: "Complete Wellness Multivitamin",
-      price: 29.99,
-      quantity: 3,
-      image: diabetesimg,
-      category: "Overall Wellness",
-      inStock: true,
-      prescription: false,
-    },
-  ];
-
-  useEffect(() => {
-    setCartItems(mockCartItems);
-  }, []);
-
-  const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-
-  const removeItem = (id) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
-  };
+  const {
+    cartItems,
+    removeFromCart,
+    updateQuantity,
+    getCartTotal,
+    getCartCount,
+  } = useCart();
 
   const handleCheckout = () => {
     navigate("/checkout");
   };
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const subtotal = getCartTotal();
   const shippingCost = subtotal > 75 ? 0 : 9.99;
   const tax = subtotal * 0.08;
   const total = subtotal + shippingCost + tax;
@@ -77,7 +28,12 @@ const Cart = () => {
         <div className="empty-cart">
           <h2>Your cart is empty</h2>
           <p>Add some products to get started</p>
-          <button className="continue-shopping-btn">Continue Shopping</button>
+          <button
+            className="continue-shopping-btn"
+            onClick={() => navigate("/shop")}
+          >
+            Continue Shopping
+          </button>
         </div>
       </div>
     );
@@ -88,63 +44,76 @@ const Cart = () => {
       <div className="cart-header">
         <h1>Shopping Cart</h1>
         <span className="cart-count">
-          {cartItems.length} item{cartItems.length !== 1 ? "s" : ""}
+          {getCartCount()} item{getCartCount() !== 1 ? "s" : ""}
         </span>
       </div>
 
       <div className="cart-content">
         <div className="cart-items-section">
           <div className="cart-items">
-            {cartItems.map((item) => (
-              <div key={item.id} className="cart-item">
-                <div className="item-image">
-                  <img src={item.image} alt={item.name} />
-                  {item.prescription && (
-                    <span className="prescription-badge">Rx</span>
-                  )}
-                </div>
+            {cartItems.map((item) => {
+              // Ensure price is a number
+              const price =
+                typeof item.price === "number"
+                  ? item.price
+                  : parseFloat(item.price) || 0;
 
-                <div className="item-details">
-                  <h3>{item.name}</h3>
-                  <p className="item-category">{item.category}</p>
-                  <p className="item-status">
-                    {item.inStock ? "In Stock" : "Out of Stock"}
-                  </p>
-                </div>
+              return (
+                <div key={item.id} className="cart-item">
+                  <div className="item-image">
+                    <img
+                      src={item.image || "https://via.placeholder.com/80"}
+                      alt={item.name}
+                    />
+                    {item.prescription && (
+                      <span className="prescription-badge">Rx</span>
+                    )}
+                  </div>
 
-                <div className="quantity-controls">
+                  <div className="item-details">
+                    <h3>{item.name}</h3>
+                    <p className="item-category">
+                      {item.category?.name || "Unknown"}
+                    </p>
+                    <p className="item-status">
+                      {item.stock > 0 ? "In Stock" : "Out of Stock"}
+                    </p>
+                  </div>
+
+                  <div className="quantity-controls">
+                    <button
+                      className="qty-btn"
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      disabled={item.quantity <= 1}
+                    >
+                      −
+                    </button>
+                    <span className="quantity">{item.quantity}</span>
+                    <button
+                      className="qty-btn"
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div className="item-price">
+                    <span className="price">
+                      ${(price * item.quantity).toFixed(2)}
+                    </span>
+                    <span className="unit-price">${price.toFixed(2)} each</span>
+                  </div>
+
                   <button
-                    className="qty-btn"
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    disabled={item.quantity <= 1}
+                    className="remove-btn"
+                    onClick={() => removeFromCart(item.id)}
+                    aria-label="Remove item"
                   >
-                    −
-                  </button>
-                  <span className="quantity">{item.quantity}</span>
-                  <button
-                    className="qty-btn"
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                  >
-                    +
+                    ×
                   </button>
                 </div>
-
-                <div className="item-price">
-                  <span className="price">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </span>
-                  <span className="unit-price">${item.price} each</span>
-                </div>
-
-                <button
-                  className="remove-btn"
-                  onClick={() => removeItem(item.id)}
-                  aria-label="Remove item"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
