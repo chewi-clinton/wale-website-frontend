@@ -61,11 +61,19 @@ const AdminProducts = () => {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    Object.entries(newProduct).forEach(([key, value]) => {
-      if (value !== null && value !== "") {
-        formData.append(key, value);
-      }
-    });
+
+    // Append all fields
+    formData.append("name", newProduct.name);
+    formData.append("description", newProduct.description);
+    formData.append("price", parseFloat(newProduct.price));
+    if (newProduct.old_price) {
+      formData.append("old_price", parseFloat(newProduct.old_price));
+    }
+    formData.append("stock", parseInt(newProduct.stock));
+    formData.append("category", parseInt(newProduct.category));
+    if (newProduct.image) {
+      formData.append("image", newProduct.image);
+    }
 
     setIsLoading(true);
     try {
@@ -115,10 +123,10 @@ const AdminProducts = () => {
     setEditForm({
       name: product.name,
       description: product.description,
-      price: product.price,
-      old_price: product.old_price || "",
-      stock: product.stock,
-      category: product.category,
+      price: product.price.toString(),
+      old_price: product.old_price ? product.old_price.toString() : "",
+      stock: product.stock.toString(),
+      category: product.category.toString(),
       image: null,
     });
   };
@@ -135,15 +143,25 @@ const AdminProducts = () => {
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    Object.entries(editForm).forEach(([key, value]) => {
-      if (value !== null && value !== "") {
-        formData.append(key, value);
-      }
-    });
+
+    // Append all fields with proper types
+    formData.append("name", editForm.name);
+    formData.append("description", editForm.description);
+    formData.append("price", parseFloat(editForm.price));
+    if (editForm.old_price) {
+      formData.append("old_price", parseFloat(editForm.old_price));
+    }
+    formData.append("stock", parseInt(editForm.stock));
+    formData.append("category", parseInt(editForm.category));
+
+    // Only append image if a new one is selected
+    if (editForm.image && editForm.image instanceof File) {
+      formData.append("image", editForm.image);
+    }
 
     setIsLoading(true);
     try {
-      const response = await axios.put(
+      const response = await axios.patch(
         `/api/products/${editingProduct}/`,
         formData,
         {
@@ -162,6 +180,9 @@ const AdminProducts = () => {
       setError("");
     } catch (err) {
       setError("Failed to update product");
+      if (err.response) {
+        console.error("Error response:", err.response.data);
+      }
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -379,6 +400,9 @@ const AdminProducts = () => {
                       onChange={handleEditChange}
                       accept="image/*"
                     />
+                    <p className="image-hint">
+                      Leave empty to keep current image
+                    </p>
                   </div>
 
                   <div className="edit-actions">
