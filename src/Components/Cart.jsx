@@ -73,7 +73,7 @@ const Cart = () => {
                   <div className="item-details">
                     <h3>{item.name}</h3>
                     <p className="item-category">
-                      {item.category?.name || "Unknown"}
+                      {item.category_name || "Unknown"}
                     </p>
                     <p className="item-status">
                       {item.stock > 0 ? "In Stock" : "Out of Stock"}

@@ -85,7 +85,7 @@ const ProductDetail = () => {
         </div>
 
         <p className="category">
-          <strong>Category:</strong> {product.category?.name || "Unknown"}
+          <strong>Category:</strong> {product.category_name || "Unknown"}
         </p>
       </div>
 

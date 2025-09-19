@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { countries } from "../constant/countries.js";
 import { usStates } from "../constant/usaStates.js";
+import { useCart } from "../context/CartContext";
 import "../style/Checkout.css";
 
 const CheckoutPage = () => {
+  const navigate = useNavigate();
+  const { cartItems, getCartTotal, clearCart } = useCart();
   const [formData, setFormData] = useState({
     country: "United States",
     firstName: "",
@@ -21,6 +25,31 @@ const CheckoutPage = () => {
     useShippingAsBilling: true,
   });
 
+  const [orderTotals, setOrderTotals] = useState({
+    subtotal: 0,
+    shipping: 0,
+    tax: 0,
+    total: 0,
+    discount: 0,
+  });
+
+  useEffect(() => {
+    // Calculate order totals whenever cart changes
+    const subtotal = getCartTotal();
+    const shipping = subtotal > 75 ? 0 : 9.99;
+    const tax = subtotal * 0.08;
+    const discount = 0; // Could be calculated based on discount code
+    const total = subtotal + shipping + tax - discount;
+
+    setOrderTotals({
+      subtotal,
+      shipping,
+      tax,
+      total,
+      discount,
+    });
+  }, [cartItems, getCartTotal]);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -31,12 +60,69 @@ const CheckoutPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Checkout data:", formData);
+
+    // Create order object
+    const order = {
+      customerInfo: {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        company: formData.company,
+        address: formData.address,
+        apartment: formData.apartment,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        country: formData.country,
+        phone: formData.phone,
+      },
+      paymentMethod: formData.paymentMethod,
+      items: cartItems,
+      totals: orderTotals,
+    };
+
+    // Here you would normally send the order to your backend
+    console.log("Order submitted:", order);
+
+    // Clear the cart
+    clearCart();
+
+    // Navigate to order confirmation page
+    navigate("/order-confirmation");
   };
 
   const applyDiscount = () => {
     console.log("Applying discount code:", formData.discountCode);
+    // Here you would normally validate the discount code with your backend
+    // For now, we'll just apply a 10% discount if the code is "DISCOUNT10"
+    if (formData.discountCode === "DISCOUNT10") {
+      const discount = orderTotals.subtotal * 0.1;
+      setOrderTotals((prev) => ({
+        ...prev,
+        discount,
+        total: prev.subtotal + prev.shipping + prev.tax - discount,
+      }));
+      alert("Discount applied: 10% off");
+    } else {
+      alert("Invalid discount code");
+    }
   };
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="checkout-container">
+        <div className="empty-checkout">
+          <h2>Your cart is empty</h2>
+          <p>Please add items to your cart before checkout</p>
+          <button
+            className="continue-shopping-btn"
+            onClick={() => navigate("/shop")}
+          >
+            Continue Shopping
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="checkout-container">
@@ -268,19 +354,32 @@ const CheckoutPage = () => {
           </button>
         </div>
         <div className="summary-section">
-          <div className="order-item">
-            <div className="item-info">
-              <div className="item-image">
-                <span className="quantity-badge">1</span>
-                📦
+          {/* Dynamic Cart Items */}
+          {cartItems.map((item) => (
+            <div key={item.id} className="order-item">
+              <div className="item-info">
+                <div className="item-image">
+                  <span className="quantity-badge">{item.quantity}</span>
+                  <img
+                    src={item.image || "https://via.placeholder.com/50"}
+                    alt={item.name}
+                  />
+                </div>
+                <div className="item-details">
+                  <h3>{item.name}</h3>
+                  <p>{item.category_name || "Unknown"}</p>
+                </div>
               </div>
-              <div className="item-details">
-                <h3>EasyTouch Insulin Syringe 30 Gauge 1CC</h3>
-                <p>1/2" - BX 100</p>
+              <div className="item-price">
+                $
+                {(typeof item.price === "number"
+                  ? item.price
+                  : parseFloat(item.price || 0)
+                ).toFixed(2)}
               </div>
             </div>
-            <div className="item-price">$20.09</div>
-          </div>
+          ))}
+
           <div className="discount-section">
             <div className="discount-input-group">
               <input
@@ -299,16 +398,38 @@ const CheckoutPage = () => {
           <div className="totals">
             <div className="total-row">
               <span>Subtotal</span>
-              <span>$20.09</span>
+              <span>${orderTotals.subtotal.toFixed(2)}</span>
             </div>
+            {orderTotals.discount > 0 && (
+              <div className="total-row discount">
+                <span>Discount</span>
+                <span>-${orderTotals.discount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="total-row">
               <span>Shipping</span>
-              <span className="shipping-calc">Enter shipping address</span>
+              <span>
+                {orderTotals.shipping === 0
+                  ? "FREE"
+                  : `$${orderTotals.shipping.toFixed(2)}`}
+              </span>
+            </div>
+            <div className="total-row">
+              <span>Tax</span>
+              <span>${orderTotals.tax.toFixed(2)}</span>
             </div>
             <div className="total-row final">
               <span>Total</span>
-              <span className="currency">USD $20.09</span>
+              <span className="currency">
+                USD ${orderTotals.total.toFixed(2)}
+              </span>
             </div>
+            {orderTotals.subtotal < 75 && orderTotals.shipping > 0 && (
+              <p className="free-shipping-notice">
+                Add ${(75 - orderTotals.subtotal).toFixed(2)} more for FREE
+                shipping
+              </p>
+            )}
           </div>
         </div>
       </div>
