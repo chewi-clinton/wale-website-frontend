@@ -51,27 +51,28 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   overflow: hidden;
+  width: 120px; /* Fixed width to prevent expansion */
 }
 
 .quantity-control button {
   background: #eee;
   border: none;
-  padding: 8px 12px;
+  padding: 8px 0; /* Reduced horizontal padding */
   font-size: 1.2rem;
   cursor: pointer;
   color: #031e4d;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
+  width: 36px; /* Fixed width for buttons */
   height: 40px;
 }
 
 .quantity-control span {
-  padding: 0 15px;
+  padding: 0;
   font-weight: bold;
   color: #031e4d;
-  min-width: 30px;
+  width: 48px; /* Fixed width for quantity display */
   text-align: center;
 }
 

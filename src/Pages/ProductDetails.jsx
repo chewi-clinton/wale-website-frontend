@@ -62,7 +62,6 @@ const ProductDetail = () => {
       <div className="product-info">
         <h2 className="product-title">{product.name}</h2>
         <p className="product-price">${parseFloat(product.price).toFixed(2)}</p>
-        <p className="product-short-desc">{product.description}</p>
 
         <div className="quantity-cart">
           <div className="quantity-control">

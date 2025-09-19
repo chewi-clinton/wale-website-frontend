@@ -26,6 +26,8 @@ import AdminLogin from "./Pages/AdminLogin.jsx";
 import AdminDashboard from "./Pages/AdminDashboard.jsx";
 import AdminCategories from "./Pages/AdminCategories.jsx";
 import AdminProducts from "./Pages/AdminProducts.jsx";
+import AdminOrderDetails from "./Pages/AdminOrderDetails.jsx";
+import AdminAddProduct from "./Pages/AdminAddProduct.jsx";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -162,6 +164,22 @@ function App() {
                   element={
                     <AdminProtectedRoute>
                       <AdminProducts />
+                    </AdminProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/add-product"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminAddProduct />
+                    </AdminProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/order-details"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminOrderDetails />
                     </AdminProtectedRoute>
                   }
                 />

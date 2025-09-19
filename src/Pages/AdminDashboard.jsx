@@ -39,6 +39,24 @@ const AdminDashboard = () => {
             Manage Categories
           </Link>
         </div>
+
+        <div className="dashboard-card">
+          <div className="card-icon">➕</div>
+          <h2>Add Product</h2>
+          <p>Add a new product to your catalog</p>
+          <Link to="/admin/add-product" className="card-link">
+            Add Product
+          </Link>
+        </div>
+
+        <div className="dashboard-card">
+          <div className="card-icon">📋</div>
+          <h2>Orders</h2>
+          <p>View order details by order ID</p>
+          <Link to="/admin/order-details" className="card-link">
+            View Orders
+          </Link>
+        </div>
       </div>
     </div>
   );
