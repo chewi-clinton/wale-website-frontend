@@ -1,3 +1,4 @@
+// Updated src/App.js (replace the existing one)
 import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -20,6 +21,9 @@ import Cart from "./Components/Cart.jsx";
 import Home from "./Pages/Home.jsx";
 import ProductDetail from "./Pages/ProductDetails.jsx";
 import AgeVerification from "./Pages/AgeVerification.jsx";
+import AdminLogin from "./Pages/AdminLogin.jsx";
+import AdminCategories from "./Pages/AdminCategories.jsx";
+import AdminProducts from "./Pages/AdminProducts.jsx";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -35,6 +39,12 @@ function ScrollToTop() {
 const ProtectedRoute = ({ children }) => {
   const ageVerified = localStorage.getItem("ageVerified");
   return ageVerified ? children : <Navigate to="/age-check" />;
+};
+
+// Protect admin routes with JWT
+const AdminProtectedRoute = ({ children }) => {
+  const accessToken = localStorage.getItem("accessToken");
+  return accessToken ? children : <Navigate to="/admin/login" />;
 };
 
 function App() {
@@ -126,6 +136,25 @@ function App() {
                 <ProtectedRoute>
                   <OrderConfirmationPage />
                 </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route
+              path="/admin/categories"
+              element={
+                <AdminProtectedRoute>
+                  <AdminCategories />
+                </AdminProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/products"
+              element={
+                <AdminProtectedRoute>
+                  <AdminProducts />
+                </AdminProtectedRoute>
               }
             />
           </Routes>
