@@ -243,7 +243,7 @@ const Home = () => {
   };
 
   const handleShopNow = () => {
-    navigate("/products");
+    navigate("/shop");
   };
 
   return (

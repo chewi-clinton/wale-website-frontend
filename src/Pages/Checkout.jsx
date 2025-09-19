@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { countries } from "../constant/countries.js";
 import { usStates } from "../constant/usaStates.js";
 import { useCart } from "../context/CartContext";
+import api from "../api";
 import "../style/Checkout.css";
 
 const CheckoutPage = () => {
@@ -19,6 +20,7 @@ const CheckoutPage = () => {
     state: "Alabama",
     zipCode: "",
     phone: "",
+    email: "",
     saveInfo: false,
     paymentMethod: "zelle",
     discountCode: "",
@@ -33,12 +35,14 @@ const CheckoutPage = () => {
     discount: 0,
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
-    // Calculate order totals whenever cart changes
     const subtotal = getCartTotal();
     const shipping = subtotal > 75 ? 0 : 9.99;
     const tax = subtotal * 0.08;
-    const discount = 0; // Could be calculated based on discount code
+    const discount = 0;
     const total = subtotal + shipping + tax - discount;
 
     setOrderTotals({
@@ -58,42 +62,58 @@ const CheckoutPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
 
-    // Create order object
-    const order = {
-      customerInfo: {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        company: formData.company,
-        address: formData.address,
-        apartment: formData.apartment,
-        city: formData.city,
-        state: formData.state,
-        zipCode: formData.zipCode,
-        country: formData.country,
-        phone: formData.phone,
-      },
-      paymentMethod: formData.paymentMethod,
-      items: cartItems,
-      totals: orderTotals,
-    };
+    try {
+      const shippingAddress = `${formData.address}${
+        formData.apartment ? `, ${formData.apartment}` : ""
+      }, ${formData.city}, ${formData.state} ${formData.zipCode}, ${
+        formData.country
+      }`;
 
-    // Here you would normally send the order to your backend
-    console.log("Order submitted:", order);
+      const orderItems = cartItems.map((item) => ({
+        product: item.id,
+        quantity: item.quantity,
+        price: parseFloat(item.price),
+      }));
 
-    // Clear the cart
-    clearCart();
+      const orderData = {
+        email: formData.email,
+        shipping_address: shippingAddress,
+        items: orderItems,
+        total_price: orderTotals.total,
+        payment_method: formData.paymentMethod,
+      };
 
-    // Navigate to order confirmation page
-    navigate("/order-confirmation");
+      const response = await api.post("/api/orders/", orderData);
+      clearCart();
+      navigate("/order-confirmation", {
+        state: {
+          orderId: response.data.unique_order_id,
+        },
+      });
+    } catch (err) {
+      console.error("Order submission error:", err);
+      if (err.response) {
+        setError(
+          `Failed to place order: ${
+            err.response.data.detail || "Unknown error"
+          }`
+        );
+      } else if (err.request) {
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const applyDiscount = () => {
-    console.log("Applying discount code:", formData.discountCode);
-    // Here you would normally validate the discount code with your backend
-    // For now, we'll just apply a 10% discount if the code is "DISCOUNT10"
     if (formData.discountCode === "DISCOUNT10") {
       const discount = orderTotals.subtotal * 0.1;
       setOrderTotals((prev) => ({
@@ -127,9 +147,7 @@ const CheckoutPage = () => {
   return (
     <div className="checkout-container">
       <div className="checkout-content">
-        {/* Left Column - Forms */}
         <div className="forms-section">
-          {/* Delivery Section */}
           <div className="section">
             <h2 className="section-title">Billing Details</h2>
             <div className="form-group">
@@ -156,6 +174,7 @@ const CheckoutPage = () => {
                   value={formData.firstName}
                   onChange={handleInputChange}
                   placeholder="First name"
+                  required
                 />
               </div>
               <div className="form-group half">
@@ -166,6 +185,7 @@ const CheckoutPage = () => {
                   value={formData.lastName}
                   onChange={handleInputChange}
                   placeholder="Last name"
+                  required
                 />
               </div>
             </div>
@@ -187,6 +207,7 @@ const CheckoutPage = () => {
                 value={formData.address}
                 onChange={handleInputChange}
                 placeholder="Address"
+                required
               />
             </div>
             <div className="form-group">
@@ -208,6 +229,7 @@ const CheckoutPage = () => {
                   value={formData.city}
                   onChange={handleInputChange}
                   placeholder="City"
+                  required
                 />
               </div>
               <div className="form-group third">
@@ -242,6 +264,7 @@ const CheckoutPage = () => {
                       ? "ZIP code"
                       : "Postal code"
                   }
+                  required
                 />
               </div>
             </div>
@@ -253,6 +276,18 @@ const CheckoutPage = () => {
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="Phone"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="email"
+                name="email"
+                className="form-input"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Email"
+                required
               />
             </div>
             <div className="checkbox-group">
@@ -276,7 +311,6 @@ const CheckoutPage = () => {
               counted in delivery time for Next Day and 2 Day orders.
             </p>
           </div>
-          {/* Payment Section */}
           <div className="section">
             <h2 className="section-title">Payment</h2>
             <p className="payment-security">
@@ -349,12 +383,19 @@ const CheckoutPage = () => {
               </label>
             </div>
           </div>
-          <button className="checkout-btn" onClick={handleSubmit}>
-            Checkout
+
+          {error && <div className="error-message">{error}</div>}
+
+          <button
+            className="checkout-btn"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Processing..." : "Checkout"}
           </button>
         </div>
+
         <div className="summary-section">
-          {/* Dynamic Cart Items */}
           {cartItems.map((item) => (
             <div key={item.id} className="order-item">
               <div className="item-info">
