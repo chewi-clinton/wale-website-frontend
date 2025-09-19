@@ -6,6 +6,7 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import ShopPage from "./Pages/ShopPage.jsx";
 import OrderConfirmationPage from "./Pages/OrderConfirmationPage.jsx";
@@ -22,6 +23,7 @@ import Home from "./Pages/Home.jsx";
 import ProductDetail from "./Pages/ProductDetails.jsx";
 import AgeVerification from "./Pages/AgeVerification.jsx";
 import AdminLogin from "./Pages/AdminLogin.jsx";
+import AdminDashboard from "./Pages/AdminDashboard.jsx";
 import AdminCategories from "./Pages/AdminCategories.jsx";
 import AdminProducts from "./Pages/AdminProducts.jsx";
 
@@ -42,122 +44,134 @@ const ProtectedRoute = ({ children }) => {
 
 const AdminProtectedRoute = ({ children }) => {
   const accessToken = localStorage.getItem("accessToken");
-  return accessToken ? children : <Navigate to="/admin/login" />;
+  return accessToken ? children : <Navigate to="/admin" />;
 };
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <div className="app">
-          <Header />
-          <ScrollToTop />
-          <main>
-            <Routes>
-              <Route path="/age-check" element={<AgeVerification />} />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/shop"
-                element={
-                  <ProtectedRoute>
-                    <ShopPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/cart"
-                element={
-                  <ProtectedRoute>
-                    <Cart />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/product/:id"
-                element={
-                  <ProtectedRoute>
-                    <ProductDetail />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/privacypolicy"
-                element={
-                  <ProtectedRoute>
-                    <PrivacyPolicy />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/checkout"
-                element={
-                  <ProtectedRoute>
-                    <CheckoutPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/about-us"
-                element={
-                  <ProtectedRoute>
-                    <AboutPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/shippingpolicy"
-                element={
-                  <ProtectedRoute>
-                    <ShippingPolicy />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/refundandreturn"
-                element={
-                  <ProtectedRoute>
-                    <RefundAndReturnsPolicy />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/order-confirmation"
-                element={
-                  <ProtectedRoute>
-                    <OrderConfirmationPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/admin" element={<AdminLogin />} />
-              <Route
-                path="/admin/categories"
-                element={
-                  <AdminProtectedRoute>
-                    <AdminCategories />
-                  </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/products"
-                element={
-                  <AdminProtectedRoute>
-                    <AdminProducts />
-                  </AdminProtectedRoute>
-                }
-              />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <div className="app">
+            <Header />
+            <ScrollToTop />
+            <main>
+              <Routes>
+                <Route path="/age-check" element={<AgeVerification />} />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/shop"
+                  element={
+                    <ProtectedRoute>
+                      <ShopPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/cart"
+                  element={
+                    <ProtectedRoute>
+                      <Cart />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/product/:id"
+                  element={
+                    <ProtectedRoute>
+                      <ProductDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/privacypolicy"
+                  element={
+                    <ProtectedRoute>
+                      <PrivacyPolicy />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/checkout"
+                  element={
+                    <ProtectedRoute>
+                      <CheckoutPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/about-us"
+                  element={
+                    <ProtectedRoute>
+                      <AboutPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/shippingpolicy"
+                  element={
+                    <ProtectedRoute>
+                      <ShippingPolicy />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/refundandreturn"
+                  element={
+                    <ProtectedRoute>
+                      <RefundAndReturnsPolicy />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/order-confirmation"
+                  element={
+                    <ProtectedRoute>
+                      <OrderConfirmationPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminLogin />} />
+                <Route
+                  path="/admin/dashboard"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminDashboard />
+                    </AdminProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/categories"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminCategories />
+                    </AdminProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/products"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminProducts />
+                    </AdminProtectedRoute>
+                  }
+                />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

@@ -1,130 +1,177 @@
-// src/Pages/AdminCategories.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../axiosConfig";
 import { useNavigate } from "react-router-dom";
-import "../style/Admin.css";
+import "../style/AdminCategories.css";
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [editingId, setEditingId] = useState(null);
+  const [newCategory, setNewCategory] = useState("");
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const fetchCategories = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return navigate("/admin/login");
-
-    try {
-      const response = await axios.get(
-        "http://localhost:8000/api/categories/",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setCategories(response.data);
-    } catch (err) {
-      if (err.response?.status === 401) {
-        // Attempt refresh or logout
-        localStorage.removeItem("accessToken");
-        navigate("/admin/login");
-      }
-    }
-  };
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const fetchCategories = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("/api/categories/");
+      setCategories(response.data);
+      setError("");
+    } catch (err) {
+      setError("Failed to fetch categories");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddCategory = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("accessToken");
-    const data = { name, description };
+    if (!newCategory.trim()) return;
 
+    setIsLoading(true);
     try {
-      if (editingId) {
-        await axios.put(
-          `http://localhost:8000/api/categories/${editingId}/`,
-          data,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      } else {
-        await axios.post("http://localhost:8000/api/categories/", data, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      }
-      fetchCategories();
-      setName("");
-      setDescription("");
-      setEditingId(null);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleEdit = (category) => {
-    setName(category.name);
-    setDescription(category.description);
-    setEditingId(category.id);
-  };
-
-  const handleDelete = async (id) => {
-    const token = localStorage.getItem("accessToken");
-    try {
-      await axios.delete(`http://localhost:8000/api/categories/${id}/`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await axios.post("/api/categories/", {
+        name: newCategory,
       });
-      fetchCategories();
+      setCategories([...categories, response.data]);
+      setNewCategory("");
+      setError("");
     } catch (err) {
+      setError("Failed to add category");
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this category?"))
+      return;
+
+    setIsLoading(true);
+    try {
+      await axios.delete(`/api/categories/${id}/`);
+      setCategories(categories.filter((cat) => cat.id !== id));
+      setError("");
+    } catch (err) {
+      setError("Failed to delete category");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const startEditing = (category) => {
+    setEditingCategory(category.id);
+    setEditName(category.name);
+  };
+
+  const handleUpdateCategory = async (e) => {
+    e.preventDefault();
+    if (!editName.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axios.put(`/api/categories/${editingCategory}/`, {
+        name: editName,
+      });
+      setCategories(
+        categories.map((cat) =>
+          cat.id === editingCategory ? response.data : cat
+        )
+      );
+      setEditingCategory(null);
+      setEditName("");
+      setError("");
+    } catch (err) {
+      setError("Failed to update category");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const cancelEditing = () => {
+    setEditingCategory(null);
+    setEditName("");
   };
 
   return (
-    <div className="admin-container">
-      <h2 className="admin-title">Manage Categories</h2>
-      <form className="admin-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Category Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <button type="submit" className="admin-button">
-          {editingId ? "Update" : "Add"} Category
+    <div className="admin-categories">
+      <div className="categories-header">
+        <h1>Category Management</h1>
+        <button
+          className="back-btn"
+          onClick={() => navigate("/admin/dashboard")}
+        >
+          ← Back to Dashboard
         </button>
-      </form>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((cat) => (
-            <tr key={cat.id}>
-              <td>{cat.name}</td>
-              <td>{cat.description}</td>
-              <td className="admin-item-actions">
-                <button onClick={() => handleEdit(cat)}>Edit</button>
-                <button className="delete" onClick={() => handleDelete(cat.id)}>
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      </div>
+
+      <div className="add-category-form">
+        <h2>Add New Category</h2>
+        <form onSubmit={handleAddCategory}>
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder="Category name"
+            required
+          />
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Adding..." : "Add Category"}
+          </button>
+        </form>
+      </div>
+
+      {error && <div className="error-message">{error}</div>}
+
+      <div className="categories-grid">
+        {isLoading && categories.length === 0 ? (
+          <div className="loading">Loading categories...</div>
+        ) : categories.length === 0 ? (
+          <div className="no-categories">No categories found</div>
+        ) : (
+          categories.map((category) => (
+            <div key={category.id} className="category-card">
+              {editingCategory === category.id ? (
+                <form onSubmit={handleUpdateCategory} className="edit-form">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    required
+                  />
+                  <div className="edit-actions">
+                    <button type="submit" disabled={isLoading}>
+                      Save
+                    </button>
+                    <button type="button" onClick={cancelEditing}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <h3>{category.name}</h3>
+                  <div className="category-actions">
+                    <button onClick={() => startEditing(category)}>Edit</button>
+                    <button onClick={() => handleDeleteCategory(category.id)}>
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
