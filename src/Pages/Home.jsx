@@ -9,7 +9,7 @@ import Partner4 from "../assets/Partner4.png";
 import Partner5 from "../assets/Partner5.webp";
 import WeightManagement from "../assets/weightmanagement.jpg";
 import DiabetesCare from "../assets/Diabetescare.jpg";
-import Wellness from "../assets/painkiller.jpg";
+import Wellness from "../assets/insulin.jpg";
 import Review1 from "../assets/review1.jpg";
 import Review2 from "../assets/review2.jpg";
 import Review3 from "../assets/review3.jpg";
@@ -25,6 +25,10 @@ const Home = () => {
   const [hasAnimated, setHasAnimated] = useState(false);
   const counterRef = useRef(null);
   const [expandedFaq, setExpandedFaq] = useState(null);
+  const reviewsRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const autoScrollRef = useRef(null);
+  const scrollPositionRef = useRef(0);
 
   const heroData = {
     title: "WELCOME TO TRIMAXA Pharmacy",
@@ -58,9 +62,9 @@ const Home = () => {
       products: "15+ Products",
     },
     {
-      title: "Pain Killers",
+      title: "Insulin",
       description:
-        "Holistic health solutions including nutritional supplements and immune support",
+        "Health solutions including in regulating blood sugar levels, enhancing metabolic health, and supporting effective diabetes management.",
       image: Wellness,
       products: "40+ Products",
     },
@@ -188,6 +192,40 @@ const Home = () => {
     return () => observer.disconnect();
   }, [hasAnimated]);
 
+  useEffect(() => {
+    const reviewsContainer = reviewsRef.current;
+    if (!reviewsContainer) return;
+
+    const originalReviews = reviewsContainer.innerHTML;
+    reviewsContainer.innerHTML = originalReviews + originalReviews;
+
+    const scrollStep = 1;
+    const scrollInterval = 20;
+
+    const autoScroll = () => {
+      if (!isHovered) {
+        const scrollWidth = reviewsContainer.scrollWidth;
+        const clientWidth = reviewsContainer.clientWidth;
+
+        if (scrollPositionRef.current >= scrollWidth / 2) {
+          scrollPositionRef.current = 0;
+          reviewsContainer.scrollLeft = 0;
+        } else {
+          scrollPositionRef.current += scrollStep;
+          reviewsContainer.scrollLeft = scrollPositionRef.current;
+        }
+      }
+    };
+
+    autoScrollRef.current = setInterval(autoScroll, scrollInterval);
+
+    return () => {
+      if (autoScrollRef.current) {
+        clearInterval(autoScrollRef.current);
+      }
+    };
+  }, [isHovered]);
+
   const animateCounter = () => {
     const target = 956;
     const duration = 2000;
@@ -303,7 +341,12 @@ const Home = () => {
       <section className="reviews-section">
         <div className="container">
           <h2>Customer Reviews</h2>
-          <div className="reviews-grid">
+          <div
+            className="reviews-grid"
+            ref={reviewsRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             {reviews.map((review, index) => (
               <div key={index} className="review-card">
                 <div className="review-header">

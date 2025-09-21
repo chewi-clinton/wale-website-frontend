@@ -339,26 +339,12 @@
   overflow-x: auto;
   gap: 30px;
   padding-bottom: 20px;
-  scrollbar-width: thin;
-  scrollbar-color: #26b5fc #f1f1f1;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .reviews-grid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.reviews-grid::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.reviews-grid::-webkit-scrollbar-thumb {
-  background: #26b5fc;
-  border-radius: 4px;
-}
-
-.reviews-grid::-webkit-scrollbar-thumb:hover {
-  background: #1e90ff;
+  display: none;
 }
 
 .review-card {
