@@ -227,8 +227,8 @@ const Home = () => {
   }, [isHovered]);
 
   const animateCounter = () => {
-    const target = 956;
-    const duration = 2000;
+    const target = 2650;
+    const duration = 2500;
     const increment = target / (duration / 16);
     let current = 0;
 

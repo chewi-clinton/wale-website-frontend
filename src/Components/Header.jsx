@@ -38,51 +38,21 @@ const Header = () => {
                 <Link to="/shop">SHOP</Link>
               </li>
               <li>
-                <Link to="/about-us">ABOUT US</Link>
+                <Link to="/buy-medication">BUY MEDICATION NOW</Link>
               </li>
               <li>
-                <Link to="/promo">PROMO</Link>
+                <Link to="/apply-for-prescription">
+                  APPLY FOR PRESCRIPTRION
+                </Link>
+              </li>
+              <li>
+                <Link to="/about-us">ABOUT US</Link>
               </li>
             </ul>
           </nav>
 
           <div className="header-right">
             <div className="header-icons">
-              <button className="icon-btn">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </button>
-              <button className="icon-btn">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.35-4.35" />
-                </svg>
-              </button>
-              <button className="icon-btn">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-              </button>
               <Link to="/cart" className="icon-btn cart-icon">
                 <svg
                   width="20"
@@ -125,23 +95,23 @@ const Header = () => {
               </Link>
             </li>
             <li>
+              <Link to="/buy-medication" onClick={toggleMenu}>
+                BUY MEDICATION
+              </Link>
+            </li>
+            <li>
+              <Link to="/apply-for-prescription" onClick={toggleMenu}>
+                APPLY FOR PRESCRIPTION
+              </Link>
+            </li>
+            <li>
               <Link to="/about-us" onClick={toggleMenu}>
                 ABOUT US
               </Link>
             </li>
             <li>
-              <Link to="/contact" onClick={toggleMenu}>
-                CONTACT
-              </Link>
-            </li>
-            <li>
               <Link to="/faq" onClick={toggleMenu}>
                 FAQ
-              </Link>
-            </li>
-            <li>
-              <Link to="/promo" onClick={toggleMenu}>
-                PROMO
               </Link>
             </li>
           </ul>

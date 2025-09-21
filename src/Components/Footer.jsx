@@ -40,9 +40,7 @@ const Footer = () => {
             <li>
               <Link to="/shop">Diabetes Supplies</Link>
             </li>
-            <li>
-              <Link to="/shop">Pain Killers</Link>
-            </li>
+
             <li>
               <Link to="/shop">Insulin</Link>
             </li>
@@ -83,9 +81,7 @@ const Footer = () => {
             <li>
               <Link to="/shop">Diabetes Supplies</Link>
             </li>
-            <li>
-              <Link to="/shop">Pain Killers</Link>
-            </li>
+
             <li>
               <Link to="/shop">Insulin</Link>
             </li>

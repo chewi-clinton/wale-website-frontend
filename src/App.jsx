@@ -28,6 +28,10 @@ import AdminCategories from "./Pages/AdminCategories.jsx";
 import AdminProducts from "./Pages/AdminProducts.jsx";
 import AdminOrderDetails from "./Pages/AdminOrderDetails.jsx";
 import AdminAddProduct from "./Pages/AdminAddProduct.jsx";
+import InsulinForm from "./Pages/InsulinForm.jsx";
+import Medicalweightloss from "./Pages/Medicalweightloss.jsx";
+import Treatments from "./Pages/Treatments.jsx";
+import ApplyForPrescription from "./Pages/Applyforprescription.jsx";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -113,6 +117,38 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <AboutPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/insulin-form"
+                  element={
+                    <ProtectedRoute>
+                      <InsulinForm />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/buy-medication"
+                  element={
+                    <ProtectedRoute>
+                      <Treatments />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/apply-for-prescription"
+                  element={
+                    <ProtectedRoute>
+                      <ApplyForPrescription />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/weight-loss-form"
+                  element={
+                    <ProtectedRoute>
+                      <Medicalweightloss />
                     </ProtectedRoute>
                   }
                 />
