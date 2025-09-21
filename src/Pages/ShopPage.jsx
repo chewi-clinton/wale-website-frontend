@@ -16,6 +16,11 @@ const ShopPage = () => {
   });
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
@@ -26,7 +31,6 @@ const ShopPage = () => {
         setProducts(response.data);
         setFilteredProducts(response.data);
 
-        // Extract unique categories
         const uniqueCategories = [
           ...new Set(
             response.data.map((item) => item.category_name).filter(Boolean)
@@ -42,43 +46,42 @@ const ShopPage = () => {
   }, []);
 
   useEffect(() => {
-    // Apply filters whenever products or filter settings change
     let result = [...products];
 
-    // Category filter
     if (filters.category !== "all") {
       result = result.filter((item) => item.category_name === filters.category);
     }
 
-    // Price range filter
     if (filters.priceRange !== "all") {
       const [min, max] = filters.priceRange.split("-").map(Number);
       result = result.filter((item) => {
-        const price =
-          typeof item.price === "number"
-            ? item.price
-            : parseFloat(item.price || 0);
+        const price = Math.min(
+          ...item.variants.map((v) => parseFloat(v.price))
+        );
         return price >= min && price <= max;
       });
     }
 
-    // Sort products
     switch (filters.sortBy) {
       case "price-low-high":
         result.sort((a, b) => {
-          const priceA =
-            typeof a.price === "number" ? a.price : parseFloat(a.price || 0);
-          const priceB =
-            typeof b.price === "number" ? b.price : parseFloat(b.price || 0);
+          const priceA = Math.min(
+            ...a.variants.map((v) => parseFloat(v.price))
+          );
+          const priceB = Math.min(
+            ...b.variants.map((v) => parseFloat(v.price))
+          );
           return priceA - priceB;
         });
         break;
       case "price-high-low":
         result.sort((a, b) => {
-          const priceA =
-            typeof a.price === "number" ? a.price : parseFloat(a.price || 0);
-          const priceB =
-            typeof b.price === "number" ? b.price : parseFloat(b.price || 0);
+          const priceA = Math.min(
+            ...a.variants.map((v) => parseFloat(v.price))
+          );
+          const priceB = Math.min(
+            ...b.variants.map((v) => parseFloat(v.price))
+          );
           return priceB - priceA;
         });
         break;
@@ -89,7 +92,6 @@ const ShopPage = () => {
         result.sort((a, b) => b.name.localeCompare(a.name));
         break;
       default:
-        // No sorting
         break;
     }
 
@@ -108,9 +110,44 @@ const ShopPage = () => {
     navigate(`/product/${productId}`);
   };
 
-  const handleAddToCart = (product) => {
-    addToCart(product);
-    alert(`${product.name} added to cart!`);
+  const openVariantModal = (product) => {
+    setSelectedProduct(product);
+    const firstAvailableVariant =
+      product.variants.find((v) => v.stock > 0) || product.variants[0];
+    setSelectedVariant(firstAvailableVariant);
+    setQuantity(1);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+    setSelectedVariant(null);
+    setQuantity(1);
+  };
+
+  const increaseQty = () => {
+    if (selectedVariant && quantity < selectedVariant.stock) {
+      setQuantity(quantity + 1);
+    }
+  };
+
+  const decreaseQty = () => {
+    if (quantity > 1) setQuantity(quantity - 1);
+  };
+
+  const handleAddToCart = () => {
+    if (selectedProduct && selectedVariant) {
+      const productToAdd = {
+        ...selectedProduct,
+        selectedVariant,
+      };
+      addToCart(productToAdd, quantity);
+      closeModal();
+      alert(
+        `${selectedProduct.name} (${selectedVariant.name}) x${quantity} added to cart!`
+      );
+    }
   };
 
   const toggleFilterMenu = () => {
@@ -130,7 +167,6 @@ const ShopPage = () => {
     <div className="shop-container">
       <h2 className="shop-title">Our Products</h2>
 
-      {/* Mobile Filter Button */}
       <div className="mobile-filter-btn-container">
         <button className="mobile-filter-btn" onClick={toggleFilterMenu}>
           <span className="hamburger-icon">
@@ -142,7 +178,6 @@ const ShopPage = () => {
         </button>
       </div>
 
-      {/* Filters Section */}
       <div className={`filters-section ${isFilterMenuOpen ? "open" : ""}`}>
         <div className="filter-group">
           <label htmlFor="category-filter">Category:</label>
@@ -201,36 +236,48 @@ const ShopPage = () => {
       {error && <p className="error">{error}</p>}
 
       <div className="products-grid">
-        {filteredProducts.map((item) => (
-          <div key={item.id} className="product-card">
-            <img
-              src={item.image || "https://via.placeholder.com/150"}
-              alt={item.name}
-              className="product-img"
-              onClick={() => handleProductClick(item.id)}
-            />
-            <h3 className="product-name">{item.name}</h3>
-            <p className="product-category">
-              {item.category_name || "Unknown"}
-            </p>
-            <div className="product-price">
-              {item.old_price && (
-                <span className="old-price">
-                  ${parseFloat(item.old_price).toFixed(2)}
-                </span>
-              )}
-              <span className="new-price">
-                ${parseFloat(item.price).toFixed(2)}
-              </span>
+        {filteredProducts.map((item) => {
+          const cheapestVariant =
+            item.variants
+              .filter((v) => v.stock > 0)
+              .sort((a, b) => a.price - b.price)[0] || item.variants[0];
+
+          return (
+            <div key={item.id} className="product-card">
+              <img
+                src={item.image || "https://via.placeholder.com/150"}
+                alt={item.name}
+                className="product-img"
+                onClick={() => handleProductClick(item.id)}
+              />
+              <h3 className="product-name">{item.name}</h3>
+              <p className="product-category">
+                {item.category_name || "Unknown"}
+              </p>
+              <div className="product-price">
+                {cheapestVariant && (
+                  <span className="new-price">
+                    ${parseFloat(cheapestVariant.price).toFixed(2)}
+                  </span>
+                )}
+                {item.variants.length > 1 && (
+                  <span className="variant-count">
+                    {item.variants.length} variants
+                  </span>
+                )}
+              </div>
+              <button
+                className="add-to-cart"
+                onClick={() => openVariantModal(item)}
+                disabled={!cheapestVariant || cheapestVariant.stock === 0}
+              >
+                {cheapestVariant && cheapestVariant.stock > 0
+                  ? "Add to Cart"
+                  : "Out of Stock"}
+              </button>
             </div>
-            <button
-              className="add-to-cart"
-              onClick={() => handleAddToCart(item)}
-            >
-              Add to Cart
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {filteredProducts.length === 0 && products.length > 0 && (
@@ -239,6 +286,109 @@ const ShopPage = () => {
           <button className="reset-filters-btn" onClick={resetFilters}>
             Reset Filters
           </button>
+        </div>
+      )}
+
+      {isModalOpen && selectedProduct && (
+        <div className="variant-modal-overlay" onClick={closeModal}>
+          <div className="variant-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <button className="close-modal" onClick={closeModal}>
+                &times;
+              </button>
+              <h3>Select Variant</h3>
+            </div>
+
+            <div className="modal-content">
+              <div className="modal-product-info">
+                <img
+                  src={
+                    selectedProduct.image || "https://via.placeholder.com/150"
+                  }
+                  alt={selectedProduct.name}
+                  className="modal-product-image"
+                />
+                <div className="modal-product-details">
+                  <h4>{selectedProduct.name}</h4>
+                  <p className="modal-product-category">
+                    {selectedProduct.category_name || "Unknown"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="variant-selection">
+                <h5>Select Variant:</h5>
+                <div className="modal-variant-list">
+                  {selectedProduct.variants.map((variant) => (
+                    <div
+                      key={variant.id}
+                      className={`modal-variant-item ${
+                        selectedVariant && selectedVariant.id === variant.id
+                          ? "selected"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedVariant(variant)}
+                    >
+                      <div className="variant-name">{variant.name}</div>
+                      <div className="variant-price">
+                        ${parseFloat(variant.price).toFixed(2)}
+                      </div>
+                      <div className="variant-stock">
+                        {variant.stock > 0 ? (
+                          <span className="in-stock">In Stock</span>
+                        ) : (
+                          <span className="out-of-stock">Out of Stock</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {selectedVariant && (
+                <div className="modal-quantity-section">
+                  <h5>Quantity:</h5>
+                  <div className="quantity-control">
+                    <button onClick={decreaseQty} disabled={quantity <= 1}>
+                      −
+                    </button>
+                    <span>{quantity}</span>
+                    <button
+                      onClick={increaseQty}
+                      disabled={quantity >= selectedVariant.stock}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="stock-info">
+                    {selectedVariant.stock > 0 ? (
+                      <span className="in-stock">
+                        {selectedVariant.stock} available
+                      </span>
+                    ) : (
+                      <span className="out-of-stock">Out of Stock</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="modal-actions">
+                <div className="modal-total-price">
+                  Total: $
+                  {(
+                    selectedVariant && selectedVariant.price * quantity
+                  ).toFixed(2)}
+                </div>
+                <button
+                  className="modal-add-btn"
+                  onClick={handleAddToCart}
+                  disabled={!selectedVariant || selectedVariant.stock === 0}
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

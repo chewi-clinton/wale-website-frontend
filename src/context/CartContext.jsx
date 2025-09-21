@@ -24,32 +24,45 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product, quantity = 1) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
+      // Check if product with same variant already exists in cart
+      const existingItemIndex = prevItems.findIndex(
+        (item) =>
+          item.id === product.id &&
+          item.selectedVariant.id === product.selectedVariant.id
+      );
 
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
+      if (existingItemIndex !== -1) {
+        // Update quantity if item already exists
+        const updatedItems = [...prevItems];
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          quantity: updatedItems[existingItemIndex].quantity + quantity,
+        };
+        return updatedItems;
       } else {
+        // Add new item to cart
         return [...prevItems, { ...product, quantity }];
       }
     });
   };
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = (productId, variantId) => {
     setCartItems((prevItems) =>
-      prevItems.filter((item) => item.id !== productId)
+      prevItems.filter(
+        (item) =>
+          !(item.id === productId && item.selectedVariant.id === variantId)
+      )
     );
   };
 
-  const updateQuantity = (productId, newQuantity) => {
+  const updateQuantity = (productId, variantId, newQuantity) => {
     if (newQuantity < 1) return;
 
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === productId ? { ...item, quantity: newQuantity } : item
+        item.id === productId && item.selectedVariant.id === variantId
+          ? { ...item, quantity: newQuantity }
+          : item
       )
     );
   };
@@ -60,7 +73,7 @@ export const CartProvider = ({ children }) => {
 
   const getCartTotal = () => {
     return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
+      (total, item) => total + item.selectedVariant.price * item.quantity,
       0
     );
   };

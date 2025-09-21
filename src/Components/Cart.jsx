@@ -52,14 +52,13 @@ const Cart = () => {
         <div className="cart-items-section">
           <div className="cart-items">
             {cartItems.map((item) => {
-              // Ensure price is a number
-              const price =
-                typeof item.price === "number"
-                  ? item.price
-                  : parseFloat(item.price) || 0;
+              const price = parseFloat(item.selectedVariant.price) || 0;
 
               return (
-                <div key={item.id} className="cart-item">
+                <div
+                  key={`${item.id}-${item.selectedVariant.id}`}
+                  className="cart-item"
+                >
                   <div className="item-image">
                     <img
                       src={item.image || "https://via.placeholder.com/80"}
@@ -72,18 +71,27 @@ const Cart = () => {
 
                   <div className="item-details">
                     <h3>{item.name}</h3>
+                    <p className="item-variant">{item.selectedVariant.name}</p>
                     <p className="item-category">
                       {item.category_name || "Unknown"}
                     </p>
                     <p className="item-status">
-                      {item.stock > 0 ? "In Stock" : "Out of Stock"}
+                      {item.selectedVariant.stock > 0
+                        ? "In Stock"
+                        : "Out of Stock"}
                     </p>
                   </div>
 
                   <div className="quantity-controls">
                     <button
                       className="qty-btn"
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        updateQuantity(
+                          item.id,
+                          item.selectedVariant.id,
+                          item.quantity - 1
+                        )
+                      }
                       disabled={item.quantity <= 1}
                     >
                       −
@@ -91,7 +99,14 @@ const Cart = () => {
                     <span className="quantity">{item.quantity}</span>
                     <button
                       className="qty-btn"
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        updateQuantity(
+                          item.id,
+                          item.selectedVariant.id,
+                          item.quantity + 1
+                        )
+                      }
+                      disabled={item.quantity >= item.selectedVariant.stock}
                     >
                       +
                     </button>
@@ -106,7 +121,9 @@ const Cart = () => {
 
                   <button
                     className="remove-btn"
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() =>
+                      removeFromCart(item.id, item.selectedVariant.id)
+                    }
                     aria-label="Remove item"
                   >
                     ×

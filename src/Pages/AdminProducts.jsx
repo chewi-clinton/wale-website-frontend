@@ -8,6 +8,7 @@ const AdminProducts = () => {
   const [categories, setCategories] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [editForm, setEditForm] = useState({});
+  const [variants, setVariants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [filters, setFilters] = useState({
@@ -84,17 +85,22 @@ const AdminProducts = () => {
     }
   };
 
-  const startEditing = (product) => {
+  const startEditing = async (product) => {
     setEditingProduct(product.id);
     setEditForm({
       name: product.name,
       description: product.description,
-      price: product.price.toString(),
-      old_price: product.old_price ? product.old_price.toString() : "",
-      stock: product.stock.toString(),
-      category: product.category.toString(),
+      category: product.category,
       image: null,
     });
+
+    try {
+      const response = await api.get(`/api/products/${product.id}/variants/`);
+      setVariants(response.data);
+    } catch (err) {
+      console.error("Failed to fetch variants", err);
+      setVariants([]);
+    }
   };
 
   const handleEditChange = (e) => {
@@ -106,17 +112,48 @@ const AdminProducts = () => {
     }
   };
 
+  const handleVariantChange = (index, field, value) => {
+    const newVariants = [...variants];
+    newVariants[index][field] = value;
+    setVariants(newVariants);
+  };
+
+  const addVariant = () => {
+    if (variants.length < 5) {
+      setVariants([...variants, { name: "", price: "", stock: "" }]);
+    }
+  };
+
+  const removeVariant = async (index) => {
+    if (variants.length > 1) {
+      const variantId = variants[index].id;
+
+      if (variantId) {
+        try {
+          await api.delete(`/api/variants/${variantId}/`);
+        } catch (err) {
+          console.error("Failed to delete variant", err);
+        }
+      }
+
+      const newVariants = [...variants];
+      newVariants.splice(index, 1);
+      setVariants(newVariants);
+    }
+  };
+
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
 
+    const validVariants = variants.filter((v) => v.name && v.price && v.stock);
+    if (validVariants.length === 0) {
+      setError("Please add at least one product variant");
+      return;
+    }
+
+    const formData = new FormData();
     formData.append("name", editForm.name);
     formData.append("description", editForm.description);
-    formData.append("price", parseFloat(editForm.price));
-    if (editForm.old_price) {
-      formData.append("old_price", parseFloat(editForm.old_price));
-    }
-    formData.append("stock", parseInt(editForm.stock));
     formData.append("category", parseInt(editForm.category));
 
     if (editForm.image && editForm.image instanceof File) {
@@ -125,7 +162,7 @@ const AdminProducts = () => {
 
     setIsLoading(true);
     try {
-      const response = await api.patch(
+      const productResponse = await api.patch(
         `/api/products/${editingProduct}/`,
         formData,
         {
@@ -134,13 +171,27 @@ const AdminProducts = () => {
           },
         }
       );
-      setProducts(
-        products.map((product) =>
-          product.id === editingProduct ? response.data : product
-        )
-      );
+
+      for (const variant of validVariants) {
+        if (variant.id) {
+          await api.patch(`/api/variants/${variant.id}/`, {
+            name: variant.name,
+            price: parseFloat(variant.price),
+            stock: parseInt(variant.stock),
+          });
+        } else {
+          await api.post(`/api/products/${editingProduct}/variants/`, {
+            name: variant.name,
+            price: parseFloat(variant.price),
+            stock: parseInt(variant.stock),
+          });
+        }
+      }
+
+      fetchProducts();
       setEditingProduct(null);
       setEditForm({});
+      setVariants([]);
       setError("");
     } catch (err) {
       setError("Failed to update product");
@@ -156,6 +207,7 @@ const AdminProducts = () => {
   const cancelEditing = () => {
     setEditingProduct(null);
     setEditForm({});
+    setVariants([]);
   };
 
   return (
@@ -219,59 +271,20 @@ const AdminProducts = () => {
                     />
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Price ($)</label>
-                      <input
-                        type="number"
-                        name="price"
-                        value={editForm.price}
-                        onChange={handleEditChange}
-                        min="0"
-                        step="0.01"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Old Price ($)</label>
-                      <input
-                        type="number"
-                        name="old_price"
-                        value={editForm.old_price}
-                        onChange={handleEditChange}
-                        min="0"
-                        step="0.01"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Stock</label>
-                      <input
-                        type="number"
-                        name="stock"
-                        value={editForm.stock}
-                        onChange={handleEditChange}
-                        min="0"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Category</label>
-                      <select
-                        name="category"
-                        value={editForm.category}
-                        onChange={handleEditChange}
-                        required
-                      >
-                        {categories.map((category) => (
-                          <option key={category.id} value={category.id}>
-                            {category.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                  <div className="form-group">
+                    <label>Category</label>
+                    <select
+                      name="category"
+                      value={editForm.category}
+                      onChange={handleEditChange}
+                      required
+                    >
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="form-group">
@@ -298,6 +311,93 @@ const AdminProducts = () => {
                     </p>
                   </div>
 
+                  <div className="variants-section">
+                    <div className="variants-header">
+                      <h3>Product Variants</h3>
+                      {variants.length < 5 && (
+                        <button
+                          type="button"
+                          onClick={addVariant}
+                          className="add-variant-btn"
+                        >
+                          + Add Variant
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="variants-list">
+                      {variants.map((variant, index) => (
+                        <div key={index} className="variant-item">
+                          {variants.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeVariant(index)}
+                              className="remove-variant-btn"
+                              aria-label="Remove variant"
+                            >
+                              ×
+                            </button>
+                          )}
+                          <div className="variant-content">
+                            <div className="variant-field">
+                              <label>Variant Name</label>
+                              <input
+                                type="text"
+                                value={variant.name}
+                                onChange={(e) =>
+                                  handleVariantChange(
+                                    index,
+                                    "name",
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="e.g., 30ml"
+                                required
+                              />
+                            </div>
+
+                            <div className="variant-field">
+                              <label>Price ($)</label>
+                              <input
+                                type="number"
+                                value={variant.price}
+                                onChange={(e) =>
+                                  handleVariantChange(
+                                    index,
+                                    "price",
+                                    e.target.value
+                                  )
+                                }
+                                min="0"
+                                step="0.01"
+                                placeholder="0.00"
+                                required
+                              />
+                            </div>
+
+                            <div className="variant-field">
+                              <label>Stock</label>
+                              <input
+                                type="number"
+                                value={variant.stock}
+                                onChange={(e) =>
+                                  handleVariantChange(
+                                    index,
+                                    "stock",
+                                    e.target.value
+                                  )
+                                }
+                                min="0"
+                                placeholder="0"
+                                required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="edit-actions">
                     <button type="submit" disabled={isLoading}>
                       Save
@@ -321,17 +421,23 @@ const AdminProducts = () => {
                       {categories.find((c) => c.id === product.category)
                         ?.name || "Unknown"}
                     </p>
-                    <div className="product-price">
-                      {product.old_price && (
-                        <span className="old-price">
-                          ${parseFloat(product.old_price).toFixed(2)}
-                        </span>
+                    <div className="product-variants">
+                      {product.variants && product.variants.length > 0 ? (
+                        product.variants.map((variant) => (
+                          <div key={variant.id} className="variant-info">
+                            <span className="variant-name">{variant.name}</span>
+                            <span className="variant-price">
+                              ${parseFloat(variant.price).toFixed(2)}
+                            </span>
+                            <span className="variant-stock">
+                              Stock: {variant.stock}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="no-variants">No variants available</p>
                       )}
-                      <span className="new-price">
-                        ${parseFloat(product.price).toFixed(2)}
-                      </span>
                     </div>
-                    <p className="product-stock">Stock: {product.stock}</p>
                   </div>
                   <div className="product-actions">
                     <button onClick={() => startEditing(product)}>Edit</button>

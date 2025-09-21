@@ -9,6 +9,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState(null);
   const [isWishlist, setIsWishlist] = useState(false);
   const { id } = useParams();
   const { addToCart } = useCart();
@@ -18,6 +19,9 @@ const ProductDetail = () => {
       try {
         const response = await axios.get(`/api/products/${id}/`);
         setProduct(response.data);
+        if (response.data.variants && response.data.variants.length > 0) {
+          setSelectedVariant(response.data.variants[0]);
+        }
       } catch (err) {
         console.error("Error fetching product:", err);
         setError("Failed to load product details. Please try again later.");
@@ -38,9 +42,13 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    if (product) {
-      addToCart(product, quantity);
-      alert(`${product.name} added to cart!`);
+    if (product && selectedVariant) {
+      addToCart({
+        ...product,
+        selectedVariant,
+        quantity,
+      });
+      alert(`${product.name} (${selectedVariant.name}) added to cart!`);
     }
   };
 
@@ -50,7 +58,6 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail-container">
-      {/* Left Side: Image */}
       <div className="product-image">
         <img
           src={product.image || "https://via.placeholder.com/400"}
@@ -58,18 +65,69 @@ const ProductDetail = () => {
         />
       </div>
 
-      {/* Right Side: Product Info */}
       <div className="product-info">
         <h2 className="product-title">{product.name}</h2>
-        <p className="product-price">${parseFloat(product.price).toFixed(2)}</p>
+
+        {product.variants && product.variants.length > 0 && (
+          <div className="variant-selection">
+            <h3>Select Variant:</h3>
+            <div className="variant-options">
+              {product.variants.map((variant) => (
+                <button
+                  key={variant.id}
+                  className={`variant-btn ${
+                    selectedVariant && selectedVariant.id === variant.id
+                      ? "selected"
+                      : ""
+                  }`}
+                  onClick={() => setSelectedVariant(variant)}
+                >
+                  {variant.name} - ${parseFloat(variant.price).toFixed(2)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selectedVariant && (
+          <p className="product-price">
+            ${parseFloat(selectedVariant.price).toFixed(2)}
+            {selectedVariant.stock <= 5 && selectedVariant.stock > 0 && (
+              <span className="low-stock">
+                Only {selectedVariant.stock} left in stock!
+              </span>
+            )}
+            {selectedVariant.stock === 0 && (
+              <span className="out-of-stock">Out of stock</span>
+            )}
+          </p>
+        )}
 
         <div className="quantity-cart">
           <div className="quantity-control">
-            <button onClick={decreaseQty}>−</button>
+            <button
+              onClick={decreaseQty}
+              disabled={!selectedVariant || selectedVariant.stock === 0}
+            >
+              −
+            </button>
             <span>{quantity}</span>
-            <button onClick={increaseQty}>+</button>
+            <button
+              onClick={increaseQty}
+              disabled={
+                !selectedVariant ||
+                quantity >= selectedVariant.stock ||
+                selectedVariant.stock === 0
+              }
+            >
+              +
+            </button>
           </div>
-          <button className="add-to-cart" onClick={handleAddToCart}>
+          <button
+            className="add-to-cart"
+            onClick={handleAddToCart}
+            disabled={!selectedVariant || selectedVariant.stock === 0}
+          >
             ADD TO CART
           </button>
         </div>
@@ -88,7 +146,6 @@ const ProductDetail = () => {
         </p>
       </div>
 
-      {/* Bottom: Description Section */}
       <div className="product-description">
         <h3>Description</h3>
         <h4>{product.name}</h4>

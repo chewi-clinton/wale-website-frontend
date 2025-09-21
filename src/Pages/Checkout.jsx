@@ -76,8 +76,9 @@ const CheckoutPage = () => {
 
       const orderItems = cartItems.map((item) => ({
         product: item.id,
+        variant: item.selectedVariant.id,
         quantity: item.quantity,
-        price: parseFloat(item.price),
+        price: parseFloat(item.selectedVariant.price),
       }));
 
       const orderData = {
@@ -397,7 +398,10 @@ const CheckoutPage = () => {
 
         <div className="summary-section">
           {cartItems.map((item) => (
-            <div key={item.id} className="order-item">
+            <div
+              key={`${item.id}-${item.selectedVariant.id}`}
+              className="order-item"
+            >
               <div className="item-info">
                 <div className="item-image">
                   <span className="quantity-badge">{item.quantity}</span>
@@ -408,15 +412,12 @@ const CheckoutPage = () => {
                 </div>
                 <div className="item-details">
                   <h3>{item.name}</h3>
+                  <p>{item.selectedVariant.name}</p>
                   <p>{item.category_name || "Unknown"}</p>
                 </div>
               </div>
               <div className="item-price">
-                $
-                {(typeof item.price === "number"
-                  ? item.price
-                  : parseFloat(item.price || 0)
-                ).toFixed(2)}
+                ${parseFloat(item.selectedVariant.price).toFixed(2)}
               </div>
             </div>
           ))}

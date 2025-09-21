@@ -112,26 +112,39 @@
   font-size: 14px;
 }
 
-.product-price {
-  margin-bottom: 10px;
+.product-variants {
+  margin-top: 15px;
 }
 
-.old-price {
-  text-decoration: line-through;
-  color: #999;
-  margin-right: 10px;
+.variant-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
 }
 
-.new-price {
+.variant-info:last-child {
+  border-bottom: none;
+}
+
+.variant-name {
+  font-weight: 500;
+}
+
+.variant-price {
   color: #031e4d;
   font-weight: 600;
-  font-size: 18px;
 }
 
-.product-stock {
+.variant-stock {
   color: #666;
   font-size: 14px;
-  margin-bottom: 15px;
+}
+
+.no-variants {
+  color: #999;
+  font-style: italic;
+  margin: 10px 0;
 }
 
 .product-actions {
@@ -176,6 +189,92 @@
   margin-bottom: 15px;
 }
 
+.edit-form .form-group label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.edit-form .form-group input,
+.edit-form .form-group select,
+.edit-form .form-group textarea {
+  padding: 10px;
+  font-size: 14px;
+}
+
+.edit-form .variants-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.edit-form .variants-header {
+  margin-bottom: 15px;
+}
+
+.edit-form .variants-header h3 {
+  font-size: 16px;
+}
+
+.edit-form .variants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-form .variant-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+.edit-form .variant-item:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.edit-form .variant-content {
+  display: flex;
+  gap: 15px;
+  flex: 1;
+}
+
+.edit-form .variant-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.edit-form .variant-field label {
+  font-size: 13px;
+}
+
+.edit-form .variant-field input {
+  padding: 8px;
+  font-size: 13px;
+}
+
+.edit-form .remove-variant-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+  transition: background 0.3s;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.edit-form .remove-variant-btn:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
 .edit-actions {
   display: flex;
   justify-content: center;
@@ -196,9 +295,17 @@
   color: white;
 }
 
+.edit-actions button:first-child:hover {
+  background: #27ae60;
+}
+
 .edit-actions button:last-child {
   background: #95a5a6;
   color: white;
+}
+
+.edit-actions button:last-child:hover {
+  background: #7f8c8d;
 }
 
 .loading,
