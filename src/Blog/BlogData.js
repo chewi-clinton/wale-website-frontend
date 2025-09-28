@@ -10,16 +10,17 @@ import image9 from "../assets/blog/image9.webp";
 import image10 from "../assets/blog/image10.webp";
 import image11 from "../assets/blog/image11.webp";
 import image12 from "../assets/blog/image12.webp";
-import image13 from "../assets/blog/image13.webp";
+import image13 from "../assets/blog/drug.webp";
 import image14 from "../assets/blog/image14.webp";
 import image15 from "../assets/blog/image15.webp";
 import image16 from "../assets/blog/image16.webp";
-import image17 from "../assets/blog/image17.webp";
+import image17 from "../assets/blog/laptopandfood.webp";
 import image18 from "../assets/blog/image18.webp";
-import image19 from "../assets/blog/image1.webp";
-import image20 from "../assets/blog/image1.webp";
-import image21 from "../assets/blog/image1.webp";
-import image22 from "../assets/blog/image1.webp";
+import image19 from "../assets/blog/lifting.webp";
+import image20 from "../assets/blog/image18.webp";
+import image21 from "../assets/blog/womanandfood.webp";
+import image22 from "../assets/blog/dresses.webp";
+import image23 from "../assets/blog/slow.png";
 
 const blogImages = {
   image1,
@@ -44,6 +45,7 @@ const blogImages = {
   image20,
   image21,
   image22,
+  image23,
 };
 
 export const blogPosts = [
@@ -54,13 +56,13 @@ export const blogPosts = [
       "Semaglutide for weight loss has hit the mainstream, and the rapidly growing popularity of medications like Ozempic and Wegovy has created a demand that is straining supply chains.",
     content: `
       <p>Written by: Tanna Donalson, P.A.-C<br>February 25, 2025</p>
-      <img src={blogImages.image1} alt="Semaglutide Market" />
+      <img src="${blogImages.image2}" alt="Semaglutide Market" />
       <p>Semaglutide for weight loss has hit the mainstream, and the rapidly growing popularity of medications like Ozempic and Wegovy has created a demand that is straining supply chains. According to one study conducted by the University of Southern California and the University of Wisconsin, there was a 442 percent increase in semaglutide prescription fills from January 2021 to December 2023.</p>
       <p>The increased demand and lack of supply have caused the FDA to put Ozempic and Wegovy on the health agency's drug shortage list. This means compounding pharmacies can make generic versions of the drug to help patients receive semaglutide during the shortage. This has been, for better or worse, a boon for access as compound semaglutide is significantly cheaper than Ozempic and Wegovy, which cost nearly $1,000 a month and is regularly not covered by health insurance. The semaglutide shortage has opened a massive market for less expensive compound semaglutides.</p>
       <p>Companies like Hims and Hers Health are trying to capitalize on the compound semaglutide market, investing between $14 to $16 million on a Super Bowl Commercial this year. Compounding pharmacies play a key role in helping patients and doctors access semaglutide when it is unavailable or unaffordable.</p>
       <p>However, using them is not without risk, as compounding pharmacies and companies they work with are not subject to the same FDA scrutiny as FDA-approved drugs. You must protect yourself if you buy compound semaglutide from a compounding pharmacy or buy them online. Here are a few things you should do to protect yourself from shady people selling you harmful drugs.</p>
       <h2>Only work with FDA-approved compounding pharmacies</h2>
-      <img src={blogImages.image2} alt="FDA Approved" />
+      
       <p>If you are going to take compound semaglutide, it is essential that you know what compound pharmacy it is being produced in. Your compound pharmacy must have a 503a or 503b designation by the FDA. No compound drugs are FDA-approved, but a 503A or 503B designation is confirmation that the FDA and State pharmacy boards audit the pharmacy. If they have that certification, it means they are compliant with FDA standards and are keeping to a higher standard.</p>
       <p>503A compound pharmacies are designated to create compound semaglutides for particular patients. Your medical provider sends them a script, and they make that medication on-site specifically for you.</p>
       <p>503B compound pharmacies are outsourcing facilities allowed to manufacture large batches of compound medication for healthcare facilities. These types of facilities are where large companies that sell compound semaglutide online get it from.</p>
@@ -76,7 +78,7 @@ export const blogPosts = [
     `,
     author: "Tanna Donalson, P.A.-C",
     date: "February 25, 2025",
-    image: blogImages.image3,
+    image: blogImages.image1,
     category: "Health",
     tags: [
       "compounded semaglutide",
@@ -95,13 +97,13 @@ export const blogPosts = [
       "Mandi St. Germaine's journey with GLP-1 medications showcases resilience, empowerment, and transformation as she balanced motherhood, entrepreneurship, and personal wellness.",
     content: `
       <p>Written by: Ana Reisdorf, MS, RD<br>Reviewed by: Mandi St. Germaine<br>March 17, 2025</p>
-      <img src={blogImages.image4} alt="Mandi St. Germaine" />
+      
       <p>Mandi St. Germaine's story is one of resilience, empowerment, and transformation. A mother and stepmother to four girls, an entrepreneur, and passionate advocate for women's health, Mandi's journey into the world of GLP-1 medications began as she grappled with weight fluctuations and a family history of insulin resistance, a common struggle for many women balancing busy lives and family responsibilities.</p>
       <h2>An Early Adoption</h2>
       <p>Mandi was an early user of GLP-1 medication as a trusted family member was successfully using it with patients for weight loss before it was popular. She was initially hesitant about trying the medication, as she was not looking for just another quick fix.</p>
       <p>She did research the potential side effects and long-term impacts of the medications, but at the time there was limited information available. Her turning point came when she realized the methods she previously relied on, including rigorous workouts and careful meal planning, were no longer effective as she approached her mid-30s. After gaining nearly 50 pounds during the COVID pandemic, she decided to give this new approach to manage her weight a shot.</p>
       <h2>Slow and Steady</h2>
-      <img src={blogImages.image5} alt="Slow and Steady" />
+      <img src="${blogImages.image23}" alt="Slow and Steady" />
       <p>Taking a cautious approach, Mandi started at a low dose, determined to avoid drastic, rapid weight loss that could lead to regaining weight later. Her intentional strategy resulted in steady and sustainable weight loss, shedding around 40 pounds over two years.</p>
       <p>Over the last two years, she has learned the importance of maintaining a balanced lifestyle, combining medication with mindful nutrition, hydration, and regular physical activity. She recognized that GLP-1 medication wasn't merely a quick fix but a tool that was part of a larger strategy towards sustainable wellness.</p>
       <h2>A Life Shift</h2>
@@ -112,7 +114,7 @@ export const blogPosts = [
     `,
     author: "Ana Reisdorf, MS, RD",
     date: "March 17, 2025",
-    image: blogImages.image6,
+    image: blogImages.image3,
     category: "Health",
     tags: ["semaglutide", "weight loss"],
   },
@@ -123,7 +125,7 @@ export const blogPosts = [
       "When you're on a weight loss journey, particularly one supported by medications like GLP-1s, shedding pounds isn't the only thing you'll be letting go of.",
     content: `
       <p>Written by: D'nai Walker<br>March 17, 2025</p>
-      <img src={blogImages.image7} alt="Organizing Your Life" />
+     
       <p>When you're on a weight loss journey, particularly one supported by medications like GLP-1s, shedding pounds isn't the only thing you'll be letting go of. You might also need to release some emotional baggage—along with those clothes in your closet that no longer fit or serve your new lifestyle. Let's get into some practical tips on how organizing your physical space can also help clear your mind, making room for your healthier, more confident self.</p>
       <h2>When to Let Go of Old Clothes</h2>
       <p>Many of us hold onto clothes that no longer fit, either hoping we'll fit into them again or fearing we might regain the weight. But it's important to ask yourself honestly:</p>
@@ -135,7 +137,7 @@ export const blogPosts = [
       <p>Sentimental clothing can be challenging to discard. I recommend taking a picture or revisiting old photos of yourself wearing these items as a way of preserving the memory without keeping the physical piece.</p>
       <p>It's ok to let go of the past and who you used to be. I encourage individuals to thank their clothes for the role they've played and then move forward.</p>
       <h2>Organizing Through Your Weight Loss Journey</h2>
-      <img src={blogImages.image8} alt="Organizing Your Closet" />
+      <img src="${blogImages.image22}" alt="Organizing Your Closet" />
       <p>If you are losing weight rapidly, you may need to declutter your closet a bit more often. I typically recommend my clients organize their closets seasonally, but you may need to increase it to every six weeks.</p>
       <p>Also, consider adding size tags to your hangers. This is a simple yet effective way to keep track of clothing sizes as your body changes. This prevents frustration when getting dressed and ensures you're only reaching for items that fit well. Pair this with closet zoning, which is dedicating specific sections for different sizes in order to create a streamlined system that helps you quickly identify what's wearable now versus what might need to be stored or donated.</p>
       <p>Keep a donation bin in your closet for easy disposal of items as you transition to smaller sizes. Then be sure to take them to the donation center at least quarterly. Think of it as making space for the new you.</p>
@@ -154,7 +156,7 @@ export const blogPosts = [
     `,
     author: "D'nai Walker",
     date: "March 17, 2025",
-    image: blogImages.image9,
+    image: blogImages.image5,
     category: "Health",
     tags: ["decluttering", "organization", "weight loss"],
   },
@@ -165,7 +167,7 @@ export const blogPosts = [
       "Lindsay Cohen, a registered dietitian and certified diabetes care and education specialist, shares her experience using Ozempic to manage her type 1 diabetes.",
     content: `
       <p>Written by: Ana Reisdorf, MS, RD<br>Reviewed by: Lindsay Cohen, RD, CDCES<br>March 17, 2025</p>
-      <img src={blogImages.image10} alt="Type 1 Diabetes" />
+      
       <p>Lindsay Cohen, a registered dietitian and certified diabetes care and education specialist, has been living with type 1 diabetes for nearly three decades. Her diagnosis inspired her to become a dietitian and help others learn to manage their diabetes better.</p>
       <h2>Discovering GLP-1 for Type 1 Diabetes</h2>
       <p>Diagnosed with Type 1 at age nine, Lindsay's personal and professional journey has centered around diabetes management. In 2023, she launched Mama Betes, a blog and online practice dedicated to supporting mothers with diabetes, highlighting the unique challenges they face.</p>
@@ -183,7 +185,7 @@ export const blogPosts = [
     `,
     author: "Ana Reisdorf, MS, RD",
     date: "March 17, 2025",
-    image: blogImages.image11,
+    image: blogImages.image7,
     category: "Health",
     tags: ["ozempic", "semaglutide", "type 1 diabetes"],
   },
@@ -194,7 +196,7 @@ export const blogPosts = [
       "ZepboundⓇ is the brand name for tirzepatide, a GLP-1 medication approved for weight loss. Learn how it works, its side effects, and how it compares to other medications.",
     content: `
       <p>Written by: Ana Reisdorf, MS, RD<br>Reviewed by: Dr. Janelle Duah<br>April 14, 2025</p>
-      <img src={blogImages.image18} alt="Zepbound" />
+      
       <p>ZepboundⓇ is the brand name for tirzepatide, a GLP-1 medication approved for weight loss. It is the sister medication of MounjaroⓇ, which contains the same active ingredient, but is used for blood sugar management.</p>
       <p>If you are considering using ZepboundⓇ for weight loss, how does it work, and what are the side effects you can expect?</p>
       <h2>What is ZepboundⓇ?</h2>
@@ -204,7 +206,7 @@ export const blogPosts = [
       <p>ZepboundⓇ mimics the action of the GLP-1 hormone, leading to reduced cravings and less hunger. But ZepboundⓇ takes it a step further by also targeting a hormone called glucose-dependent insulinotropic polypeptide (GIP). The targeting of both hormones seems to be more effective at helping people lose weight.</p>
       <p>According to a trial by Eli Lilly, participants on the highest dose of ZepboundⓇ lost an average of 20.9% of their body weight after 72 weeks compared with just 3% lost by the placebo group.</p>
       <h2>How Do You Take ZepboundⓇ?</h2>
-      <img src={blogImages.image13} alt="Zepbound Injection" />
+      <img src="${blogImages.image13}" alt="Zepbound Injection" />
       <p>ZepboundⓇ must be prescribed by your healthcare provider. It comes in pre-filled pens that you store in your refrigerator. You will use the pens to inject your stomach, thigh, or upper arm once a week on the same day.</p>
       <p>The medication dose must be increased gradually. Your doctor will typically increase the dose once a month until the maximum dose is reached or you reach your goal weight. The goal of gradually increasing the medication is to reduce the risk of side effects and allow your body to get used to it.</p>
       <p>The dosage of ZepboundⓇ is as follows:</p>
@@ -249,7 +251,7 @@ export const blogPosts = [
     `,
     author: "Ana Reisdorf, MS, RD",
     date: "April 14, 2025",
-    image: blogImages.image18,
+    image: blogImages.image8,
     category: "Health",
     tags: [
       "Tirzepatide",
@@ -265,11 +267,11 @@ export const blogPosts = [
       "We are still discovering so many different benefits of GLP-1 medications. While most people know they work for weight loss and blood sugar management, did you know that they have benefits for heart health as well?",
     content: `
       <p>Written by: Ana Reisdorf, MS, RD<br>Reviewed by: Dr. Janelle Duah<br>April 14, 2025</p>
-      <img src={blogImages.image15} alt="GLP-1 Heart Health" />
+      
       <p>We are still discovering so many different benefits of GLP-1 medications. While most people know they work for weight loss and blood sugar management, did you know that they have benefits for heart health as well?</p>
       <p>In this article, we will dive into the potential benefits for your heart and what the latest research says about how GLP-1 can help protect your heart.</p>
       <h2>How GLP-1 Improves Heart Health</h2>
-      <img src={blogImages.image16} alt="Heart Health Research" />
+     
       <p>Two large trials have evaluated the impact of GLP-1 on heart health. The LEADER trial evaluated how liraglutide impacted heart health in patients with type 2 diabetes who were already at a higher risk for heart attacks and strokes. The trial lasted almost 4 years and involved 9,340 participants.</p>
       <p>This study demonstrated significant benefits for heart health, showing a 13% reduction in major adverse cardiovascular events (MACE), including nonfatal heart attacks, nonfatal strokes, and cardiovascular death.</p>
       <p>The SUSTAIN-6 trial, published in 2016, examined the safety of semaglutide on heart health in 3,297 patients with type 2 diabetes and an elevated risk of heart disease. Over a little over two years, semaglutide treatment resulted in a 26% reduction in MACE, especially for nonfatal strokes and heart attacks. Furthermore, semaglutide also had a positive effect on weight loss and blood pressure.</p>
@@ -296,7 +298,7 @@ export const blogPosts = [
     `,
     author: "Ana Reisdorf, MS, RD",
     date: "April 14, 2025",
-    image: blogImages.image17,
+    image: blogImages.image9,
     category: "Health",
     tags: ["glp1", "heart health", "wegovy", "zepbound"],
   },
@@ -307,14 +309,14 @@ export const blogPosts = [
       "If you're on a GLP-1 medication, you know the medication reduces your hunger cues. While this is the benefit of the medication, it makes it difficult to get the nutrition you need every day, especially protein.",
     content: `
       <p>Written by: Ismael Torres<br>Reviewed by: Ana Reisdorf, MS, RD<br>April 16, 2025</p>
-      <img src={blogImages.image18} alt="High-Protein Lunches" />
+     
       <p>If you're on a GLP-1 medication, you know the medication reduces your hunger cues. While this is the benefit of the medication and the reason it induces weight loss, this makes it difficult to get the nutrition you need every day, especially protein.</p>
       <p>Without enough protein, you may be losing lean muscle mass instead of just fat, which will impact your metabolic health in the long run. Muscle loss can also predispose you to mobility issues and fractures later in life.</p>
       <p>Consuming enough protein is important for preserving the muscle mass you already have, especially when you're eating fewer calories. Protein can also keep you feeling full longer and help keep your blood sugar in check, which also supports weight loss.</p>
       <p>It is important to prioritize protein at each meal to avoid adverse effects from the GLP-1 medications and continue to support your weight loss journey.</p>
       <p>To make it easier for you to eat enough protein, we gathered easy high-protein lunch recipes from fellow registered dietitians to help you effortlessly reach your goals. Lunch needs to be quick and simple since you are likely busy with other tasks. Each of these recipes has at least 20 grams of protein to keep you full all afternoon.</p>
       <h2>Dietitian-Approved High-Protein Lunch Salads</h2>
-      <img src={blogImages.image19} alt="Protein Salads" />
+      <img src="${blogImages.image12}" alt="Protein Salads" />
       <h3>Mediterranean White Bean, Tuna & Sundried Tomato Salad</h3>
       <p>Beans and tuna are great sources of protein that are both nutritious and low in calories. Registered dietitian Amy Lawson recommends her Mediterranean White Bean, Tuna, and Sundried Tomato Salad that only takes 5 minutes to make and has around 29g of protein for ½ the recipe (makes 2 servings).</p>
       <h3>Berry Chicken Salad with Honey Balsamic Dressing</h3>
@@ -329,13 +331,13 @@ export const blogPosts = [
       <h3>Mediterranean Tuna-Stuffed Peppers</h3>
       <p>Tuna is another convenient, shelf-stable, and high-protein food that can be added to so many dishes. Fellow dietitian Anne Danahy created these Mediterranean Tuna-Stuffed Peppers that only take 15 minutes to make and have 25 g of protein.</p>
       <h3>Portobello Veggie Burger</h3>
-      <img src={blogImages.image20} alt="Veggie Burger" />
+     
       <p>Veggie burgers are a great meat-free option that provides protein, but take less time to prepare than traditional meat burgers. Registered dietitian Kathy Levin created this Portobello Veggie Burger recipe that only takes 25 minutes to make and has 22g of protein. This is a high-protein meal alternative option for burgers that anyone can enjoy.</p>
       <p>Want more support around your nutrition on a GLP-1? Check out our Beyond the Shot nutrition guides.</p>
     `,
     author: "Ismael Torres",
     date: "April 16, 2025",
-    image: blogImages.image21,
+    image: blogImages.image17,
     category: "Health",
     tags: ["high protein", "lunch ideas", "quick lunch ideas", "recipes"],
   },
@@ -346,20 +348,20 @@ export const blogPosts = [
       "In the daily hustle of busy schedules, work, and to-do lists, dinner can often be a quick drive-thru meal or something we grab quickly. But on a GLP-1, I want to encourage you to sit down for this important meal.",
     content: `
       <p>Written by: Ismael Torres<br>Reviewed by: Ana Reisdorf, MS, RD<br>April 16, 2025</p>
-      <img src={blogImages.image22} alt="High-Protein Dinners" />
+    
       <p>In the daily hustle of busy schedules, work, and to-do lists, dinner can often be a quick drive-thru meal or something we grab quickly. But on a GLP-1, I want to encourage you to sit down for this important meal.</p>
       <p>Dinner is not just a meal, it's a daily opportunity to reconnect with others, laugh with your loved ones, share stories, and create memories around the table. This is also a great opportunity to meet your goal of eating enough protein.</p>
       <p>Protein is important for preserving lean muscle, supporting metabolism, and maintaining energy throughout the day. Meeting protein needs can be harder for people on GLP-1 medications with appetite alteration and eating less. That's why we've created a collection of quick, 30-minute high-protein dinners designed specifically for GLP-1 users.</p>
       <p>These meals are portion-friendly and packed with protein to support muscle and satiety. The meals are balanced with fiber, healthy fats, and blood sugar-friendly carbs, and they are fast and easy, perfect for busy evenings. Plus, each recipe has at least 20g of protein per serving.</p>
       <h2>Jerk-Style Shrimp Rice Bowl</h2>
-      <img src={blogImages.image1} alt="Shrimp Rice Bowl" />
+      <img src="${blogImages.image14}" alt="Shrimp Rice Bowl" />
       <p>Shrimp is a great seafood choice to add protein to your bowls and dishes. A fellow RD, Macy Diulus, shared her Jerk Style Shrimp Rice Bowl that takes only 16 minutes to make and adds 27g of protein to your day. Wow!</p>
       <h2>Sweet Potato Taco Skillet w/ Ground Turkey</h2>
       <p>Ground turkey is a great lean protein that can be added to dishes such as bowls, tacos, skillets, and more. Jessie Winstead, a fellow RD, recommended her Sweet Potato Taco Skillet with Ground Turkey recipe that has 28 g of protein per serving and only takes 30 minutes to prepare. This dish makes 6 servings, which is perfect for a family dinner.</p>
       <h2>Mediterranean Grain Bowl</h2>
       <p>When most people think of grains, they associate them with fiber, but did you know some grains are packed with protein? Amazing right!? A fellow RD, Alex Evink, certainly put this to good use with her Mediterranean Grain Bowl that uses quinoa, a high-protein grain, and chickpeas that are also high in protein. This dish takes only 30 minutes and 30 g of protein and 8 g of fiber per serving.</p>
       <h2>High-Protein Pasta with Broccoli and Red Pepper</h2>
-      <img src={blogImages.image2} alt="High-Protein Pasta" />
+      <img src="${blogImages.image15}" alt="High-Protein Pasta" />
       <p>Protein pastas are a great new way of adding more protein to your diet. Several of these pastas use plant-based protein, so it becomes a great nonmeat option as well. Melissa Altman-Traub is a registered dietitian who shared her high-protein Pasta with Broccoli and Red Pepper recipe that only takes 15 minutes and has 24g of protein.</p>
       <h2>Creamy Cottage Cheese Pasta Bake</h2>
       <p>Cottage cheese is a great way to add protein to many of your dishes you love. It is high in calcium, magnesium, folate, selenium, phosphorus, and B vitamins. Fellow RD, Maria Lucey has shared her Creamy Cottage Cheese Pasta Bake that makes 6 servings, takes 35 minutes, and packs 37 g of protein. Amazing!</p>
@@ -368,7 +370,7 @@ export const blogPosts = [
       <h2>Chicken Parmesan Stromboli</h2>
       <p>Chicken parmesan dishes are a popular recipe for any pasta lover out there. Jessie Winstead, RD, shared her Chicken Parmesan Stromboli recipe that only takes 30 minutes, serves 6 people, and has 29g of protein. This dish is so easy to make and is filled with flavor.</p>
       <h2>High-Protein Chicken Enchiladas</h2>
-      <img src={blogImages.image3} alt="Chicken Enchiladas" />
+      <img src="${blogImages.image16}" alt="Chicken Enchiladas" />
       <p>Enchiladas are a staple in Mexican cuisine, filled with flavor and adding a special touch to your meals. Jessie Winstead shared another of her popular recipes with this High Protein Chicken Enchiladas that serves 4 people and takes 30 minutes to make. It also has 48 g of protein, which is amazing!</p>
       <h2>Greek Chicken Protein Bowls with Garlic Yogurt</h2>
       <p>If you are someone who loves making and eating bowls at dinner, you'll have to try Alex Evink's recipe for a Greek Chicken Protein Bowl with Garlic Yogurt. This dish has 51g of protein and 9.5 g of fiber, perfect for those on GLP-1.</p>
@@ -380,7 +382,7 @@ export const blogPosts = [
     `,
     author: "Ismael Torres",
     date: "April 16, 2025",
-    image: blogImages.image4,
+    image: blogImages.image21,
     category: "Health",
     tags: ["Dinner", "high protein", "recipes"],
   },
@@ -392,7 +394,7 @@ export const blogPosts = [
       "As GLP-1 medications like Ozempic, Wegovy, and Zepbound continue to dominate the conversation in the fitness and nutrition space, an important question is emerging: Do GLP-1s cause muscle loss? And more importantly, what can you do to prevent losing muscle while still losing weight?",
     content: `
       <p>Written by: Ana Reisdorf, MS, RD<br>Reviewed by: Aaron Hines, MS, ACSM-CPT<br>April 29, 2025</p>
-      <img src={blogImages.image5} alt="GLP-1 Medications and Muscle Loss" />
+     
       <p>As GLP-1 medications like Ozempic, Wegovy, and Zepbound continue to dominate the conversation in the fitness and nutrition space, an important question is emerging: Do GLP-1s cause muscle loss? And more importantly, what can you do to prevent losing muscle while still losing weight?</p>
       <p>I sat down with personal trainer Aaron Hines of Premiere Performance Training in Brentwood, TN, to tackle this vital topic. Aaron specializes in working with adults over 45, including many who are starting or currently taking GLP-1 medications. His mission is simple: help clients live pain-free, stay mobile, and maintain their strength well into their later years.</p>
       <h2>GLP-1 and Muscle Loss: What's Really Happening?</h2>
@@ -403,7 +405,7 @@ export const blogPosts = [
       <p>Aaron emphasizes that GLP-1 medications should be treated as a tool, not a magic solution. "The trifecta is the medication, proper nutrition—especially protein intake—and consistent strength training," he explained.</p>
       <p>Even with clients who feel dizzy or fatigued from the medication, Aaron doesn't give up. Instead, he adjusts the intensity of their workouts, gives them more rest between sets, and encourages small meals or protein shakes before training. "We meet them where they're at," he said, "but the strength training still has to happen."</p>
       <h2>Can You Build or Maintain Muscle on a GLP-1?</h2>
-      <img src={blogImages.image6} alt="Strength Training with GLP-1" />
+      
       <p>The answer is yes—if you're consistent. "We've had clients who spaced out their dosage or even came off the medication and maintained their weight loss through intense strength training and nutrition," said Aaron. "It's possible, but it takes commitment."</p>
       <p>He shared stories of clients, especially women, who have lost weight on GLP-1s and maintained it by lifting heavier weights and building muscle. One client even phased out her medication completely after realizing how good she felt with consistent workouts.</p>
       <h2>How Often Should You Train on GLP-1?</h2>
@@ -418,7 +420,7 @@ export const blogPosts = [
     `,
     author: "Ana Reisdorf, MS, RD",
     date: "April 29, 2025",
-    image: blogImages.image7,
+    image: blogImages.image19,
     category: "Health",
     tags: ["exercise", "strength training"],
   },
@@ -429,7 +431,7 @@ export const blogPosts = [
       "Digestive health is fundamental to overall well-being, impacting everything from energy levels to immunity and mood. For individuals taking GLP-1 medications, digestive side effects like nausea, constipation, bloating, and diarrhea are a common concern.",
     content: `
       <p>Written by: Ana Reisdorf, MS, RD<br>May 14, 2025</p>
-      <img src={blogImages.image8} alt="Soothing Digestive Side Effects" />
+     
       <p><strong>Disclaimer:</strong> This blog post is sponsored by Relesium. All opinions expressed are based on careful review and are solely my own.</p>
       <p>Digestive health is fundamental to overall well-being, impacting everything from energy levels to immunity and mood. For individuals taking GLP-1 medications, digestive side effects like nausea, constipation, bloating, and diarrhea are a common concern. Fortunately, a clinically-tested and patented combination of ingredients has emerged as effective for easing common side effects.</p>
       <h2>Why Do GLP-1 Medications Cause Digestive Side Effects?</h2>
@@ -462,7 +464,7 @@ export const blogPosts = [
     `,
     author: "Ana Reisdorf, MS, RD",
     date: "May 14, 2025",
-    image: blogImages.image9,
+    image: blogImages.image18,
     category: "Health",
     tags: ["gut health", "relesium", "side effects", "sponsored"],
   },

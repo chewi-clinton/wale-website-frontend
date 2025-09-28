@@ -32,17 +32,17 @@ const Footer = () => {
               <Link to="/">Home</Link>
             </li>
             <li>
+              <Link to="/shop">Shop</Link>
+            </li>
+            <li>
+              <Link to="/cart">Cart</Link>
+            </li>
+            <li>
               <Link to="/about-us">About Us</Link>
-            </li>
-            <li>
-              <Link to="/shop">Medical Weight Loss</Link>
-            </li>
-            <li>
-              <Link to="/shop">Diabetes Supplies</Link>
             </li>
 
             <li>
-              <Link to="/shop">Insulin</Link>
+              <Link to="/buy-medication">Buy Medication Now</Link>
             </li>
             <li>
               <Link to="/apply-for-prescription">Apply For Prescription</Link>
@@ -52,12 +52,6 @@ const Footer = () => {
         <div className="footer-section">
           <h4>Useful Links</h4>
           <ul>
-            <li>
-              <Link to="/shop">Shop</Link>
-            </li>
-            <li>
-              <Link to="/cart">Cart</Link>
-            </li>
             <li>
               <Link to="/blog">blog</Link>
             </li>
