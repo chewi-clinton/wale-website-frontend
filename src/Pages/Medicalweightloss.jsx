@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../style/Insulinform.css";
 
 const Medicalweightloss = () => {
@@ -27,10 +28,21 @@ const Medicalweightloss = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form submission logic here
-    console.log("Form submitted:", formData);
-    // Navigate to a confirmation page or show a success message
-    navigate("/confirmation");
+
+    const formDataWithType = {
+      ...formData,
+      formType: "weight_loss",
+    };
+
+    axios
+      .post("/api/prescription-request/", formDataWithType)
+      .then((response) => {
+        console.log("Form submitted successfully:", response.data);
+        navigate("/confirmation");
+      })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+      });
   };
 
   return (
@@ -46,7 +58,6 @@ const Medicalweightloss = () => {
               </p>
             </div>
 
-            {/* Progress Bar */}
             <div className="progress-container">
               <div className="progress-bar">
                 <div className="progress-fill step-2"></div>

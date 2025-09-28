@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../style/applyforprescription.css";
 
 const ApplyForPrescription = () => {
@@ -34,10 +35,21 @@ const ApplyForPrescription = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form submission logic here
-    console.log("Form submitted:", formData);
-    // Navigate to a confirmation page or show a success message
-    navigate("/confirmation");
+
+    const formDataWithType = {
+      ...formData,
+      formType: "prescription",
+    };
+
+    axios
+      .post("/api/prescription-request/", formDataWithType)
+      .then((response) => {
+        console.log("Form submitted successfully:", response.data);
+        navigate("/confirmation");
+      })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+      });
   };
 
   return (
@@ -239,7 +251,6 @@ const ApplyForPrescription = () => {
                 </div>
               </div>
 
-              {/* Medical History Section */}
               <div className="medical-history-section">
                 <h2>Medical History</h2>
                 <p>Please check all that apply:</p>
@@ -292,7 +303,6 @@ const ApplyForPrescription = () => {
                 </div>
               </div>
 
-              {/* Terms and Conditions Section */}
               <div className="terms-section">
                 <h2>Terms and Conditions</h2>
                 <div className="terms-content">

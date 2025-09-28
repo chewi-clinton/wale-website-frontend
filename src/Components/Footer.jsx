@@ -45,10 +45,7 @@ const Footer = () => {
               <Link to="/shop">Insulin</Link>
             </li>
             <li>
-              <a href="#">Contact Us</a>
-            </li>
-            <li>
-              <a href="#">Apply For Prescription</a>
+              <Link to="/apply-for-prescription">Apply For Prescription</Link>
             </li>
           </ul>
         </div>
@@ -60,6 +57,9 @@ const Footer = () => {
             </li>
             <li>
               <Link to="/cart">Cart</Link>
+            </li>
+            <li>
+              <Link to="/blog">blog</Link>
             </li>
             <li>
               <Link to="/refundandreturn">Refund Policy</Link>

@@ -32,6 +32,8 @@ import InsulinForm from "./Pages/InsulinForm.jsx";
 import Medicalweightloss from "./Pages/Medicalweightloss.jsx";
 import Treatments from "./Pages/Treatments.jsx";
 import ApplyForPrescription from "./Pages/Applyforprescription.jsx";
+import Blog from "./Pages/Blog.jsx";
+import BlogPost from "./Pages/BlogPost.jsx";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -173,6 +175,35 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <OrderConfirmationPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/blog"
+                  element={
+                    <ProtectedRoute>
+                      <Blog />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/blog/:id"
+                  element={
+                    <ProtectedRoute>
+                      <BlogPost />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/faq"
+                  element={
+                    <ProtectedRoute>
+                      <div className="faq-page">
+                        <div className="container">
+                          <h1>Frequently Asked Questions</h1>
+                          <p>FAQ content coming soon...</p>
+                        </div>
+                      </div>
                     </ProtectedRoute>
                   }
                 />

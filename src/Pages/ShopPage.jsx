@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../axiosConfig";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import "../style/Shop.css";
 
@@ -22,7 +22,21 @@ const ShopPage = () => {
   const [quantity, setQuantity] = useState(1);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart } = useCart();
+
+  // Parse URL query parameters on component mount
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const categoryParam = searchParams.get("category");
+
+    if (categoryParam) {
+      setFilters((prev) => ({
+        ...prev,
+        category: categoryParam,
+      }));
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -165,7 +179,11 @@ const ShopPage = () => {
 
   return (
     <div className="shop-container">
-      <h2 className="shop-title">Our Products</h2>
+      <h2 className="shop-title">
+        {filters.category !== "all"
+          ? `${filters.category} Products`
+          : "Our Products"}
+      </h2>
 
       <div className="mobile-filter-btn-container">
         <button className="mobile-filter-btn" onClick={toggleFilterMenu}>

@@ -6,10 +6,29 @@ import logo from "../assets/Trimaxalogo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
   const { getCartCount } = useCart();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleShopMouseEnter = () => {
+    setIsShopDropdownOpen(true);
+  };
+
+  const handleShopMouseLeave = () => {
+    setTimeout(() => {
+      setIsShopDropdownOpen(false);
+    }, 500);
+  };
+
+  const handleDropdownMouseEnter = () => {
+    setIsShopDropdownOpen(true);
+  };
+
+  const handleDropdownMouseLeave = () => {
+    setIsShopDropdownOpen(false);
   };
 
   return (
@@ -34,8 +53,42 @@ const Header = () => {
               <li>
                 <Link to="/">HOME</Link>
               </li>
-              <li>
-                <Link to="/shop">SHOP</Link>
+              <li
+                className="nav-item-with-dropdown"
+                onMouseEnter={handleShopMouseEnter}
+                onMouseLeave={handleShopMouseLeave}
+              >
+                <Link to="/shop" className="shop-link">
+                  SHOP
+                  <svg
+                    className="dropdown-arrow"
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                  >
+                    <path
+                      d="M1 1L5 5L9 1"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </Link>
+                {isShopDropdownOpen && (
+                  <div
+                    className="dropdown-menu"
+                    onMouseEnter={handleDropdownMouseEnter}
+                    onMouseLeave={handleDropdownMouseLeave}
+                  >
+                    <Link to="/shop?category=Weight Loss">Weight Loss</Link>
+                    <Link to="/shop?category=Insulin">Insulin</Link>
+                    <Link to="/shop?category=Diabetes Supply">
+                      Diabetes Supply
+                    </Link>
+                  </div>
+                )}
               </li>
               <li>
                 <Link to="/buy-medication">BUY MEDICATION NOW</Link>
@@ -47,6 +100,9 @@ const Header = () => {
               </li>
               <li>
                 <Link to="/about-us">ABOUT US</Link>
+              </li>
+              <li>
+                <Link to="/blog">BLOG</Link>
               </li>
             </ul>
           </nav>
@@ -90,9 +146,42 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <Link to="/shop" onClick={toggleMenu}>
-                SHOP
-              </Link>
+              <div className="mobile-nav-item-with-submenu">
+                <Link to="/shop" onClick={toggleMenu}>
+                  SHOP
+                </Link>
+                <button
+                  className="mobile-submenu-toggle"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsShopDropdownOpen(!isShopDropdownOpen);
+                  }}
+                >
+                  {isShopDropdownOpen ? "−" : "+"}
+                </button>
+              </div>
+              {isShopDropdownOpen && (
+                <ul className="mobile-submenu">
+                  <li>
+                    <Link to="/shop?category=Insulin" onClick={toggleMenu}>
+                      Insulin
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/shop?category=Diabetes Supply"
+                      onClick={toggleMenu}
+                    >
+                      Diabetes Supply
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/shop?category=Weight Loss" onClick={toggleMenu}>
+                      Weight Loss
+                    </Link>
+                  </li>
+                </ul>
+              )}
             </li>
             <li>
               <Link to="/buy-medication" onClick={toggleMenu}>
@@ -107,6 +196,11 @@ const Header = () => {
             <li>
               <Link to="/about-us" onClick={toggleMenu}>
                 ABOUT US
+              </Link>
+            </li>
+            <li>
+              <Link to="/blog" onClick={toggleMenu}>
+                BLOG
               </Link>
             </li>
             <li>
