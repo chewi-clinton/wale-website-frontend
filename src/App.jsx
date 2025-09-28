@@ -14,7 +14,7 @@ import "./App.css";
 import Header from "./Components/Header.jsx";
 import Footer from "./Components/Footer.jsx";
 import PrivacyPolicy from "./Pages/PrivacyPolicy.jsx";
-import RefundAndReturnsPolicy from "./Pages/RefundandReturnPolicy.jsx";
+import RefundAndReturnsPolicy from "./Pages/RefundAndReturnPolicy.jsx";
 import ShippingPolicy from "./Pages/ShippingPolicy.jsx";
 import CheckoutPage from "./Pages/Checkout.jsx";
 import AboutPage from "./Pages/About.jsx";
