@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../axiosConfig"; // Import your configured axios instance
 import "../style/applyforprescription.css";
 
 const ApplyForPrescription = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,25 +33,98 @@ const ApplyForPrescription = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+
+    // Clear error when user starts typing
+    if (error) {
+      setError(null);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const requiredFields = ["email", "dateOfBirth", "phone", "state"];
+    const missingFields = requiredFields.filter((field) => !formData[field]);
+
+    if (missingFields.length > 0) {
+      setError(
+        `Please fill in the following required fields: ${missingFields.join(
+          ", "
+        )}`
+      );
+      return false;
+    }
+
+    if (!formData.agreeToTerms) {
+      setError("Please agree to the terms and conditions to continue.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
 
     const formDataWithType = {
       ...formData,
       formType: "prescription",
     };
 
-    axios
-      .post("/api/prescription-request/", formDataWithType)
-      .then((response) => {
-        console.log("Form submitted successfully:", response.data);
-        navigate("/confirmation");
-      })
-      .catch((error) => {
-        console.error("Error submitting form:", error);
-      });
+    try {
+      console.log("Submitting form data:", formDataWithType);
+
+      const response = await axios.post(
+        "/api/prescription-request/",
+        formDataWithType
+      );
+
+      console.log("Form submitted successfully:", response.data);
+      navigate("/confirmation");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+
+      // Handle different types of errors
+      if (error.response) {
+        // Server responded with error status
+        const status = error.response.status;
+        const message =
+          error.response.data?.message ||
+          error.response.data?.detail ||
+          "Unknown error";
+
+        switch (status) {
+          case 400:
+            setError(`Invalid form data: ${message}`);
+            break;
+          case 404:
+            setError(
+              "The prescription request endpoint was not found. Please contact support."
+            );
+            break;
+          case 500:
+            setError(
+              "Server error. Please try again later or contact support."
+            );
+            break;
+          default:
+            setError(`Error ${status}: ${message}`);
+        }
+      } else if (error.request) {
+        // Request was made but no response
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        // Something else happened
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,6 +140,22 @@ const ApplyForPrescription = () => {
               </p>
             </div>
 
+            {error && (
+              <div
+                className="error-message"
+                style={{
+                  backgroundColor: "#fee",
+                  color: "#c33",
+                  padding: "10px",
+                  borderRadius: "4px",
+                  marginBottom: "20px",
+                  border: "1px solid #fcc",
+                }}
+              >
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="prescription-form">
               <div className="form-row">
                 <div className="form-group">
@@ -76,6 +167,7 @@ const ApplyForPrescription = () => {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Enter your full name"
+                    disabled={loading}
                   />
                 </div>
 
@@ -89,6 +181,7 @@ const ApplyForPrescription = () => {
                     onChange={handleChange}
                     placeholder="Enter your email address"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -104,6 +197,7 @@ const ApplyForPrescription = () => {
                         value="male"
                         checked={formData.gender === "male"}
                         onChange={handleChange}
+                        disabled={loading}
                       />
                       Male
                     </label>
@@ -114,6 +208,7 @@ const ApplyForPrescription = () => {
                         value="female"
                         checked={formData.gender === "female"}
                         onChange={handleChange}
+                        disabled={loading}
                       />
                       Female
                     </label>
@@ -129,6 +224,7 @@ const ApplyForPrescription = () => {
                     value={formData.dateOfBirth}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -144,6 +240,7 @@ const ApplyForPrescription = () => {
                     onChange={handleChange}
                     placeholder="Enter your phone number"
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -157,6 +254,7 @@ const ApplyForPrescription = () => {
                     onChange={handleChange}
                     placeholder="Enter your state"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -171,6 +269,7 @@ const ApplyForPrescription = () => {
                     value={formData.address}
                     onChange={handleChange}
                     placeholder="Enter your address"
+                    disabled={loading}
                   />
                 </div>
 
@@ -183,6 +282,7 @@ const ApplyForPrescription = () => {
                     value={formData.zipCode}
                     onChange={handleChange}
                     placeholder="Enter your zip code"
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -198,6 +298,7 @@ const ApplyForPrescription = () => {
                   onChange={handleChange}
                   placeholder="List any past medical problems"
                   rows="3"
+                  disabled={loading}
                 ></textarea>
               </div>
 
@@ -210,6 +311,7 @@ const ApplyForPrescription = () => {
                   onChange={handleChange}
                   placeholder="List any current medications"
                   rows="3"
+                  disabled={loading}
                 ></textarea>
               </div>
 
@@ -222,6 +324,7 @@ const ApplyForPrescription = () => {
                   onChange={handleChange}
                   placeholder="List any known allergies"
                   rows="3"
+                  disabled={loading}
                 ></textarea>
               </div>
 
@@ -235,6 +338,7 @@ const ApplyForPrescription = () => {
                     value={formData.medicationNeeded}
                     onChange={handleChange}
                     placeholder="Enter medication needed"
+                    disabled={loading}
                   />
                 </div>
 
@@ -247,6 +351,7 @@ const ApplyForPrescription = () => {
                     value={formData.dosageNeeded}
                     onChange={handleChange}
                     placeholder="Enter dosage needed"
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -262,6 +367,7 @@ const ApplyForPrescription = () => {
                       name="thyroidCancer"
                       checked={formData.thyroidCancer}
                       onChange={handleChange}
+                      disabled={loading}
                     />
                     <span className="checkmark"></span>
                     <span className="checkbox-text">
@@ -277,6 +383,7 @@ const ApplyForPrescription = () => {
                       name="menSyndrome"
                       checked={formData.menSyndrome}
                       onChange={handleChange}
+                      disabled={loading}
                     />
                     <span className="checkmark"></span>
                     <span className="checkbox-text">
@@ -293,6 +400,7 @@ const ApplyForPrescription = () => {
                       name="glp1Allergy"
                       checked={formData.glp1Allergy}
                       onChange={handleChange}
+                      disabled={loading}
                     />
                     <span className="checkmark"></span>
                     <span className="checkbox-text">
@@ -331,6 +439,7 @@ const ApplyForPrescription = () => {
                       name="agreeToTerms"
                       checked={formData.agreeToTerms}
                       onChange={handleChange}
+                      disabled={loading}
                     />
                     <span className="checkmark"></span>
                     <span className="checkbox-text">
@@ -343,9 +452,13 @@ const ApplyForPrescription = () => {
               <button
                 type="submit"
                 className="submit-btn"
-                disabled={!formData.agreeToTerms}
+                disabled={!formData.agreeToTerms || loading}
+                style={{
+                  opacity: loading ? 0.6 : 1,
+                  cursor: loading ? "not-allowed" : "pointer",
+                }}
               >
-                Submit
+                {loading ? "Submitting..." : "Submit"}
               </button>
             </form>
           </div>

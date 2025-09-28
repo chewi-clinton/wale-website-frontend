@@ -9,6 +9,7 @@ const ShopPage = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     category: "all",
     priceRange: "all",
@@ -41,25 +42,82 @@ const ShopPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const response = await axios.get("/api/products/");
-        setProducts(response.data);
-        setFilteredProducts(response.data);
 
+        // Debug: Log the response to see what we're getting
+        console.log("API Response:", response.data);
+        console.log("Response type:", typeof response.data);
+        console.log("Is array?", Array.isArray(response.data));
+
+        // Check if response.data is an array or if products are nested
+        let productsData;
+        if (Array.isArray(response.data)) {
+          productsData = response.data;
+        } else if (response.data && Array.isArray(response.data.results)) {
+          // Handle paginated responses
+          productsData = response.data.results;
+        } else if (response.data && Array.isArray(response.data.products)) {
+          // Handle wrapped responses
+          productsData = response.data.products;
+        } else if (response.data && typeof response.data === "object") {
+          // If it's an object, try to find an array property
+          const arrayKeys = Object.keys(response.data).filter((key) =>
+            Array.isArray(response.data[key])
+          );
+          if (arrayKeys.length > 0) {
+            productsData = response.data[arrayKeys[0]];
+          } else {
+            throw new Error("No array found in response data");
+          }
+        } else {
+          throw new Error("Invalid response format");
+        }
+
+        // Ensure we have valid products data
+        if (!Array.isArray(productsData)) {
+          throw new Error("Products data is not an array");
+        }
+
+        setProducts(productsData);
+        setFilteredProducts(productsData);
+
+        // Extract unique categories safely
         const uniqueCategories = [
           ...new Set(
-            response.data.map((item) => item.category_name).filter(Boolean)
+            productsData.map((item) => item.category_name).filter(Boolean)
           ),
         ];
         setCategories(uniqueCategories);
       } catch (err) {
         console.error("Error fetching products:", err);
-        setError("Failed to load products. Please try again later.");
+        console.error("Error details:", {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status,
+        });
+
+        setError(
+          `Failed to load products: ${err.message}. Please try again later.`
+        );
+        // Set empty arrays as fallback
+        setProducts([]);
+        setFilteredProducts([]);
+        setCategories([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();
   }, []);
 
   useEffect(() => {
+    // Only filter if we have products
+    if (!Array.isArray(products) || products.length === 0) {
+      return;
+    }
+
     let result = [...products];
 
     if (filters.category !== "all") {
@@ -69,6 +127,10 @@ const ShopPage = () => {
     if (filters.priceRange !== "all") {
       const [min, max] = filters.priceRange.split("-").map(Number);
       result = result.filter((item) => {
+        // Ensure item has variants array
+        if (!Array.isArray(item.variants)) {
+          return false;
+        }
         const price = Math.min(
           ...item.variants.map((v) => parseFloat(v.price))
         );
@@ -79,6 +141,8 @@ const ShopPage = () => {
     switch (filters.sortBy) {
       case "price-low-high":
         result.sort((a, b) => {
+          if (!Array.isArray(a.variants) || !Array.isArray(b.variants))
+            return 0;
           const priceA = Math.min(
             ...a.variants.map((v) => parseFloat(v.price))
           );
@@ -90,6 +154,8 @@ const ShopPage = () => {
         break;
       case "price-high-low":
         result.sort((a, b) => {
+          if (!Array.isArray(a.variants) || !Array.isArray(b.variants))
+            return 0;
           const priceA = Math.min(
             ...a.variants.map((v) => parseFloat(v.price))
           );
@@ -100,10 +166,10 @@ const ShopPage = () => {
         });
         break;
       case "name-asc":
-        result.sort((a, b) => a.name.localeCompare(b.name));
+        result.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
         break;
       case "name-desc":
-        result.sort((a, b) => b.name.localeCompare(a.name));
+        result.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
         break;
       default:
         break;
@@ -176,6 +242,15 @@ const ShopPage = () => {
     });
     setIsFilterMenuOpen(false);
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="shop-container">
+        <div className="loading">Loading products...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="shop-container">
@@ -254,58 +329,74 @@ const ShopPage = () => {
       {error && <p className="error">{error}</p>}
 
       <div className="products-grid">
-        {filteredProducts.map((item) => {
-          const cheapestVariant =
-            item.variants
-              .filter((v) => v.stock > 0)
-              .sort((a, b) => a.price - b.price)[0] || item.variants[0];
+        {Array.isArray(filteredProducts) &&
+          filteredProducts.map((item) => {
+            // Ensure item has variants array before processing
+            const variants = Array.isArray(item.variants) ? item.variants : [];
+            const cheapestVariant =
+              variants
+                .filter((v) => v.stock > 0)
+                .sort((a, b) => a.price - b.price)[0] || variants[0];
 
-          return (
-            <div key={item.id} className="product-card">
-              <img
-                src={item.image || "https://via.placeholder.com/150"}
-                alt={item.name}
-                className="product-img"
-                onClick={() => handleProductClick(item.id)}
-              />
-              <h3 className="product-name">{item.name}</h3>
-              <p className="product-category">
-                {item.category_name || "Unknown"}
-              </p>
-              <div className="product-price">
-                {cheapestVariant && (
-                  <span className="new-price">
-                    ${parseFloat(cheapestVariant.price).toFixed(2)}
-                  </span>
-                )}
-                {item.variants.length > 1 && (
-                  <span className="variant-count">
-                    {item.variants.length} variants
-                  </span>
-                )}
+            return (
+              <div key={item.id} className="product-card">
+                <img
+                  src={item.image || "https://via.placeholder.com/150"}
+                  alt={item.name || "Product"}
+                  className="product-img"
+                  onClick={() => handleProductClick(item.id)}
+                />
+                <h3 className="product-name">
+                  {item.name || "Unknown Product"}
+                </h3>
+                <p className="product-category">
+                  {item.category_name || "Unknown"}
+                </p>
+                <div className="product-price">
+                  {cheapestVariant && (
+                    <span className="new-price">
+                      ${parseFloat(cheapestVariant.price).toFixed(2)}
+                    </span>
+                  )}
+                  {variants.length > 1 && (
+                    <span className="variant-count">
+                      {variants.length} variants
+                    </span>
+                  )}
+                </div>
+                <button
+                  className="add-to-cart"
+                  onClick={() => openVariantModal(item)}
+                  disabled={!cheapestVariant || cheapestVariant.stock === 0}
+                >
+                  {cheapestVariant && cheapestVariant.stock > 0
+                    ? "Add to Cart"
+                    : "Out of Stock"}
+                </button>
               </div>
-              <button
-                className="add-to-cart"
-                onClick={() => openVariantModal(item)}
-                disabled={!cheapestVariant || cheapestVariant.stock === 0}
-              >
-                {cheapestVariant && cheapestVariant.stock > 0
-                  ? "Add to Cart"
-                  : "Out of Stock"}
-              </button>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
 
-      {filteredProducts.length === 0 && products.length > 0 && (
-        <div className="no-products">
-          <h3>No products match your filters</h3>
-          <button className="reset-filters-btn" onClick={resetFilters}>
-            Reset Filters
-          </button>
-        </div>
-      )}
+      {Array.isArray(filteredProducts) &&
+        filteredProducts.length === 0 &&
+        products.length > 0 && (
+          <div className="no-products">
+            <h3>No products match your filters</h3>
+            <button className="reset-filters-btn" onClick={resetFilters}>
+              Reset Filters
+            </button>
+          </div>
+        )}
+
+      {Array.isArray(products) &&
+        products.length === 0 &&
+        !loading &&
+        !error && (
+          <div className="no-products">
+            <h3>No products available</h3>
+          </div>
+        )}
 
       {isModalOpen && selectedProduct && (
         <div className="variant-modal-overlay" onClick={closeModal}>
@@ -337,29 +428,30 @@ const ShopPage = () => {
               <div className="variant-selection">
                 <h5>Select Variant:</h5>
                 <div className="modal-variant-list">
-                  {selectedProduct.variants.map((variant) => (
-                    <div
-                      key={variant.id}
-                      className={`modal-variant-item ${
-                        selectedVariant && selectedVariant.id === variant.id
-                          ? "selected"
-                          : ""
-                      }`}
-                      onClick={() => setSelectedVariant(variant)}
-                    >
-                      <div className="variant-name">{variant.name}</div>
-                      <div className="variant-price">
-                        ${parseFloat(variant.price).toFixed(2)}
+                  {Array.isArray(selectedProduct.variants) &&
+                    selectedProduct.variants.map((variant) => (
+                      <div
+                        key={variant.id}
+                        className={`modal-variant-item ${
+                          selectedVariant && selectedVariant.id === variant.id
+                            ? "selected"
+                            : ""
+                        }`}
+                        onClick={() => setSelectedVariant(variant)}
+                      >
+                        <div className="variant-name">{variant.name}</div>
+                        <div className="variant-price">
+                          ${parseFloat(variant.price).toFixed(2)}
+                        </div>
+                        <div className="variant-stock">
+                          {variant.stock > 0 ? (
+                            <span className="in-stock">In Stock</span>
+                          ) : (
+                            <span className="out-of-stock">Out of Stock</span>
+                          )}
+                        </div>
                       </div>
-                      <div className="variant-stock">
-                        {variant.stock > 0 ? (
-                          <span className="in-stock">In Stock</span>
-                        ) : (
-                          <span className="out-of-stock">Out of Stock</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
 
@@ -393,9 +485,9 @@ const ShopPage = () => {
               <div className="modal-actions">
                 <div className="modal-total-price">
                   Total: $
-                  {(
-                    selectedVariant && selectedVariant.price * quantity
-                  ).toFixed(2)}
+                  {selectedVariant
+                    ? (selectedVariant.price * quantity).toFixed(2)
+                    : "0.00"}
                 </div>
                 <button
                   className="modal-add-btn"

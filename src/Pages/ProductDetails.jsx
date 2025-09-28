@@ -10,7 +10,7 @@ const ProductDetail = () => {
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(null);
-  const [isWishlist, setIsWishlist] = useState(false);
+
   const { id } = useParams();
   const { addToCart } = useCart();
 
@@ -35,10 +35,6 @@ const ProductDetail = () => {
   const increaseQty = () => setQuantity(quantity + 1);
   const decreaseQty = () => {
     if (quantity > 1) setQuantity(quantity - 1);
-  };
-
-  const toggleWishlist = () => {
-    setIsWishlist(!isWishlist);
   };
 
   const handleAddToCart = () => {
@@ -129,15 +125,6 @@ const ProductDetail = () => {
             disabled={!selectedVariant || selectedVariant.stock === 0}
           >
             ADD TO CART
-          </button>
-        </div>
-
-        <div className="wishlist-share">
-          <button className="wishlist-btn" onClick={toggleWishlist}>
-            <span className={`wishlist-icon ${isWishlist ? "filled" : ""}`}>
-              {isWishlist ? "♥" : "♡"}
-            </span>{" "}
-            Add to Wishlist
           </button>
         </div>
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://backend.trimaxapharmacy.com", // Added https:// protocol
   headers: {
     "Content-Type": "application/json",
   },
@@ -38,7 +38,9 @@ instance.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-        const response = await axios.post("/api/token/refresh/", {
+
+        // Use the same instance for consistency
+        const response = await instance.post("/api/token/refresh/", {
           refresh: refreshToken,
         });
 
