@@ -41,7 +41,7 @@ const PartnersSection = ({ partners }) => (
   </section>
 );
 
-const CategoriesSection = ({ categories }) => (
+const CategoriesSection = ({ categories, onCategoryClick }) => (
   <section className="categories-section">
     <div className="container-full">
       <h2>Our Specialized Categories</h2>
@@ -57,7 +57,12 @@ const CategoriesSection = ({ categories }) => (
             <div className="category-content">
               <h3>{category.title}</h3>
               <p>{category.description}</p>
-              <button className="category-btn">Explore Products</button>
+              <button
+                className="category-btn"
+                onClick={() => onCategoryClick(category.title)}
+              >
+                Explore Products
+              </button>
             </div>
           </div>
         ))}
@@ -184,7 +189,7 @@ const Home = () => {
 
   const categories = [
     {
-      title: "Weight Loss",
+      title: "Medical Weight Loss",
       description: "Evidence-based solutions for sustainable weight control",
       image: WeightManagement,
       products: "25+ Products",
@@ -347,6 +352,10 @@ const Home = () => {
     navigate("/shop");
   };
 
+  const handleCategoryClick = (categoryTitle) => {
+    navigate(`/shop?category=${encodeURIComponent(categoryTitle)}`);
+  };
+
   return (
     <div className="home-container">
       <section className="hero-section">
@@ -371,7 +380,10 @@ const Home = () => {
       </section>
 
       <PartnersSection partners={partners} />
-      <CategoriesSection categories={categories} />
+      <CategoriesSection
+        categories={categories}
+        onCategoryClick={handleCategoryClick}
+      />
       <ReviewsSection reviews={reviews} />
 
       <section className="trusted-section" ref={counterRef}>

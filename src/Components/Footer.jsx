@@ -4,6 +4,11 @@ import "../style/Footer.css";
 import logo from "../assets/Trimaxalogo.png";
 
 const Footer = () => {
+  const handleCategoryClick = (category) => {
+    // Navigate to shop page with category parameter
+    window.location.href = `/shop?category=${encodeURIComponent(category)}`;
+  };
+
   return (
     <footer className="footer">
       <div className="footer-content">
@@ -70,14 +75,28 @@ const Footer = () => {
           <h4>Categories</h4>
           <ul>
             <li>
-              <Link to="/shop">Medical Weight Loss</Link>
+              <a
+                onClick={() => handleCategoryClick("Weight Loss")}
+                style={{ cursor: "pointer" }}
+              >
+                Medical Weight Loss
+              </a>
             </li>
             <li>
-              <Link to="/shop">Diabetes Supplies</Link>
+              <a
+                onClick={() => handleCategoryClick("Diabetes Supplies")}
+                style={{ cursor: "pointer" }}
+              >
+                Diabetes Supplies
+              </a>
             </li>
-
             <li>
-              <Link to="/shop">Insulin</Link>
+              <a
+                onClick={() => handleCategoryClick("Insulin")}
+                style={{ cursor: "pointer" }}
+              >
+                Insulin
+              </a>
             </li>
           </ul>
         </div>

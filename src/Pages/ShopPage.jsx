@@ -22,6 +22,10 @@ const ShopPage = () => {
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
+
   const navigate = useNavigate();
   const location = useLocation();
   const { addToCart } = useCart();
@@ -176,7 +180,23 @@ const ShopPage = () => {
     }
 
     setFilteredProducts(result);
+    // Reset to first page when filters change
+    setCurrentPage(1);
   }, [products, filters]);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredProducts.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -329,8 +349,8 @@ const ShopPage = () => {
       {error && <p className="error">{error}</p>}
 
       <div className="products-grid">
-        {Array.isArray(filteredProducts) &&
-          filteredProducts.map((item) => {
+        {Array.isArray(currentItems) &&
+          currentItems.map((item) => {
             // Ensure item has variants array before processing
             const variants = Array.isArray(item.variants) ? item.variants : [];
             const cheapestVariant =
@@ -377,6 +397,43 @@ const ShopPage = () => {
             );
           })}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pagination-container">
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 1}
+            className="pagination-btn"
+          >
+            &laquo; Previous
+          </button>
+
+          <div className="page-numbers">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              (number) => (
+                <button
+                  key={number}
+                  onClick={() => paginate(number)}
+                  className={`page-number ${
+                    currentPage === number ? "active" : ""
+                  }`}
+                >
+                  {number}
+                </button>
+              )
+            )}
+          </div>
+
+          <button
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+            className="pagination-btn"
+          >
+            Next &raquo;
+          </button>
+        </div>
+      )}
 
       {Array.isArray(filteredProducts) &&
         filteredProducts.length === 0 &&
@@ -484,7 +541,7 @@ const ShopPage = () => {
 
               <div className="modal-actions">
                 <div className="modal-total-price">
-                  Total: $
+                  Total: ${" "}
                   {selectedVariant
                     ? (selectedVariant.price * quantity).toFixed(2)
                     : "0.00"}
