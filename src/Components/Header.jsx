@@ -82,7 +82,9 @@ const Header = () => {
                     onMouseEnter={handleDropdownMouseEnter}
                     onMouseLeave={handleDropdownMouseLeave}
                   >
-                    <Link to="/shop?category=Weight Loss">Weight Loss</Link>
+                    <Link to="/shop?category=Medical Weight Loss">
+                      Weight Loss
+                    </Link>
                     <Link to="/shop?category=Insulin">Insulin</Link>
                     <Link to="/shop?category=Diabetes Supply">
                       Diabetes Supply
