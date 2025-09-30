@@ -86,7 +86,7 @@ const Header = () => {
                       Weight Loss
                     </Link>
                     <Link to="/shop?category=Insulin">Insulin</Link>
-                    <Link to="/shop?category=Diabetes Supply">
+                    <Link to="/shop?category=Diabetes Supplies">
                       Diabetes Supply
                     </Link>
                   </div>
