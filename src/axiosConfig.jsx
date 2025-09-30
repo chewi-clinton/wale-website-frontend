@@ -16,11 +16,9 @@ instance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log("Axios request:", config);
     return config;
   },
   (error) => {
-    console.error("Axios request error:", error);
     return Promise.reject(error);
   }
 );
@@ -28,7 +26,6 @@ instance.interceptors.request.use(
 // Handle token expiration
 instance.interceptors.response.use(
   (response) => {
-    console.log("Axios response:", response);
     return response;
   },
   async (error) => {
@@ -39,15 +36,20 @@ instance.interceptors.response.use(
       // Skip token refresh if there's no token in localStorage
       const refreshToken = localStorage.getItem("refreshToken");
       if (!refreshToken) {
-        return Promise.reject(error);
+        // If no refresh token, just continue without authentication
+        delete originalRequest.headers.Authorization;
+        return instance(originalRequest);
       }
 
       originalRequest._retry = true;
 
       try {
-        const response = await instance.post("/api/token/refresh/", {
-          refresh: refreshToken,
-        });
+        const response = await axios.post(
+          "https://backend.trimaxapharmacy.com/api/token/refresh/",
+          {
+            refresh: refreshToken,
+          }
+        );
 
         const { access } = response.data;
         localStorage.setItem("accessToken", access);
@@ -56,19 +58,14 @@ instance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${access}`;
         return instance(originalRequest);
       } catch (refreshError) {
-        // If refresh token fails, logout user
+        // If refresh token fails, remove tokens and continue without auth
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/admin";
-        return Promise.reject(refreshError);
+        delete originalRequest.headers.Authorization;
+        return instance(originalRequest);
       }
     }
 
-    console.error("Axios response error:", {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-    });
     return Promise.reject(error);
   }
 );
