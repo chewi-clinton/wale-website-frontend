@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { countries } from "../constant/countries.js";
 import { usStates } from "../constant/usaStates.js";
 import { useCart } from "../context/CartContext";
-import api, { publicApi } from "../api"; // Import publicApi
+import api from "../api";
 import "../style/Checkout.css";
 
 const CheckoutPage = () => {
@@ -90,8 +90,8 @@ const CheckoutPage = () => {
         payment_method: formData.paymentMethod,
       };
 
-      // Use the publicApi instance without authentication for order submission
-      const response = await publicApi.post("/api/orders/", orderData);
+      // Use the default api instance (now only adds auth header if token exists)
+      const response = await api.post("/api/orders/", orderData);
       clearCart();
       navigate("/order-confirmation", {
         state: {

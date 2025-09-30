@@ -8,10 +8,11 @@ const instance = axios.create({
   },
 });
 
-// Add authorization header to requests
+// Only add authorization header if a token exists
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
+    // Only add the header if token exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -35,12 +36,15 @@ instance.interceptors.response.use(
 
     // If token expired and we haven't tried refreshing yet
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Skip token refresh if there's no token in localStorage
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (!refreshToken) {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem("refreshToken");
-
-        // Use the same instance for consistency
         const response = await instance.post("/api/token/refresh/", {
           refresh: refreshToken,
         });
@@ -68,13 +72,5 @@ instance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-// Create a separate axios instance for public requests (like order creation)
-export const publicApi = axios.create({
-  baseURL: "https://backend.trimaxapharmacy.com",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
 
 export default instance;
