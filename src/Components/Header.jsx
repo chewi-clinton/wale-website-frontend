@@ -176,7 +176,10 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link to="/shop?category=Weight Loss" onClick={toggleMenu}>
+                    <Link
+                      to="/shop?category=Medical Weight Loss"
+                      onClick={toggleMenu}
+                    >
                       Weight Loss
                     </Link>
                   </li>
