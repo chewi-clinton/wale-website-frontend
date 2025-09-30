@@ -96,9 +96,7 @@ const Header = () => {
                 <Link to="/buy-medication">BUY MEDICATION NOW</Link>
               </li>
               <li>
-                <Link to="/apply-for-prescription">
-                  APPLY FOR PRESCRIPTRION
-                </Link>
+                <Link to="/apply-for-prescription">APPLY FOR PRESCRIPTION</Link>
               </li>
               <li>
                 <Link to="/about-us">ABOUT US</Link>
