@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "backend.trimaxapharmacy.com",
+  baseURL: "https://backend.trimaxapharmacy.com",
   headers: {
     "Content-Type": "application/json",
   },
