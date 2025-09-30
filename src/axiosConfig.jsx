@@ -1,16 +1,20 @@
+// axiosConfig.js
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "https://backend.trimaxapharmacy.com", // Added https:// protocol
+  baseURL: "https://backend.trimaxapharmacy.com",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Add authorization header to requests
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
+    if (config.url === "/api/orders/" && config.method === "post") {
+      console.log("Skipping auth header for order creation");
+      return config;
+    }
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -23,7 +27,6 @@ instance.interceptors.request.use(
   }
 );
 
-// Handle token expiration
 instance.interceptors.response.use(
   (response) => {
     console.log("Axios response:", response);
@@ -32,26 +35,28 @@ instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If token expired and we haven't tried refreshing yet
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (
+        originalRequest.url === "/api/orders/" &&
+        originalRequest.method === "post"
+      ) {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true;
 
       try {
         const refreshToken = localStorage.getItem("refreshToken");
 
-        // Use the same instance for consistency
         const response = await instance.post("/api/token/refresh/", {
           refresh: refreshToken,
         });
 
         const { access } = response.data;
         localStorage.setItem("accessToken", access);
-
-        // Retry the original request with new token
         originalRequest.headers.Authorization = `Bearer ${access}`;
         return instance(originalRequest);
       } catch (refreshError) {
-        // If refresh token fails, logout user
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         window.location.href = "/admin";
