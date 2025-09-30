@@ -16,9 +16,11 @@ instance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log("Axios request:", config);
     return config;
   },
   (error) => {
+    console.error("Axios request error:", error);
     return Promise.reject(error);
   }
 );
@@ -26,6 +28,7 @@ instance.interceptors.request.use(
 // Handle token expiration
 instance.interceptors.response.use(
   (response) => {
+    console.log("Axios response:", response);
     return response;
   },
   async (error) => {
@@ -33,12 +36,17 @@ instance.interceptors.response.use(
 
     // If token expired and we haven't tried refreshing yet
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Skip token refresh if there's no token in localStorage
+      // Check if this is an admin-only endpoint that requires authentication
+      const isAdminEndpoint =
+        originalRequest.url.includes("/admin/") ||
+        (originalRequest.method !== "get" &&
+          !originalRequest.url.includes("/orders/") &&
+          !originalRequest.url.includes("/prescription-request/"));
+
+      // Skip token refresh if there's no token in localStorage OR if it's not an admin endpoint
       const refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken) {
-        // If no refresh token, just continue without authentication
-        delete originalRequest.headers.Authorization;
-        return instance(originalRequest);
+      if (!refreshToken || !isAdminEndpoint) {
+        return Promise.reject(error);
       }
 
       originalRequest._retry = true;
@@ -58,14 +66,19 @@ instance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${access}`;
         return instance(originalRequest);
       } catch (refreshError) {
-        // If refresh token fails, remove tokens and continue without auth
+        // If refresh token fails, logout user
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        delete originalRequest.headers.Authorization;
-        return instance(originalRequest);
+        window.location.href = "/admin";
+        return Promise.reject(refreshError);
       }
     }
 
+    console.error("Axios response error:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+    });
     return Promise.reject(error);
   }
 );
