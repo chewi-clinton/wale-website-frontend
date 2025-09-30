@@ -36,16 +36,12 @@ instance.interceptors.response.use(
 
     // If token expired and we haven't tried refreshing yet
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Check if this is an admin-only endpoint that requires authentication
-      const isAdminEndpoint =
-        originalRequest.url.includes("/admin/") ||
-        (originalRequest.method !== "get" &&
-          !originalRequest.url.includes("/orders/") &&
-          !originalRequest.url.includes("/prescription-request/"));
-
-      // Skip token refresh if there's no token in localStorage OR if it's not an admin endpoint
+      // Skip token refresh if there's no refresh token (guest user)
       const refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken || !isAdminEndpoint) {
+      if (!refreshToken) {
+        console.error(
+          "401 error but no refresh token - likely a guest checkout or backend permission issue"
+        );
         return Promise.reject(error);
       }
 
