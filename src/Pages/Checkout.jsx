@@ -39,11 +39,11 @@ const CheckoutPage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const subtotal = getCartTotal();
+    const subtotal = parseFloat(getCartTotal().toFixed(2));
     const shipping = subtotal > 75 ? 0 : 9.99;
-    const tax = subtotal * 0.08;
+    const tax = parseFloat((subtotal * 0.08).toFixed(2));
     const discount = 0;
-    const total = subtotal + shipping + tax - discount;
+    const total = parseFloat((subtotal + shipping + tax - discount).toFixed(2));
 
     setOrderTotals({
       subtotal,
@@ -78,14 +78,15 @@ const CheckoutPage = () => {
         product: item.id,
         variant: item.selectedVariant.id,
         quantity: item.quantity,
-        price: parseFloat(item.selectedVariant.price),
+        price: parseFloat(parseFloat(item.selectedVariant.price).toFixed(2)),
       }));
 
       const orderData = {
         email: formData.email,
+        phone: formData.phone,
         shipping_address: shippingAddress,
         items: orderItems,
-        total_price: orderTotals.total,
+        total_price: parseFloat(parseFloat(orderTotals.total).toFixed(2)),
         payment_method: formData.paymentMethod,
       };
 
@@ -116,11 +117,19 @@ const CheckoutPage = () => {
 
   const applyDiscount = () => {
     if (formData.discountCode === "DISCOUNT10") {
-      const discount = orderTotals.subtotal * 0.1;
+      const discount = parseFloat((orderTotals.subtotal * 0.1).toFixed(2));
+      const total = parseFloat(
+        (
+          orderTotals.subtotal +
+          orderTotals.shipping +
+          orderTotals.tax -
+          discount
+        ).toFixed(2)
+      );
       setOrderTotals((prev) => ({
         ...prev,
         discount,
-        total: prev.subtotal + prev.shipping + prev.tax - discount,
+        total,
       }));
       alert("Discount applied: 10% off");
     } else {
