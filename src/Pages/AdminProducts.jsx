@@ -5,6 +5,7 @@ import "../style/AdminProducts.css";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [editForm, setEditForm] = useState({});
@@ -31,8 +32,8 @@ const AdminProducts = () => {
   }, []);
 
   useEffect(() => {
-    fetchProducts();
-  }, [filters]);
+    applyFilters();
+  }, [products, filters]);
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -66,6 +67,80 @@ const AdminProducts = () => {
     } catch (err) {
       console.error("Failed to fetch categories", err);
     }
+  };
+
+  const applyFilters = () => {
+    let result = [...products];
+
+    // Apply category filter
+    if (filters.category) {
+      result = result.filter(
+        (product) => product.category === parseInt(filters.category)
+      );
+    }
+
+    // Apply search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      result = result.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchLower) ||
+          (product.description &&
+            product.description.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply price range filter
+    if (filters.priceRange !== "all") {
+      const [min, max] = filters.priceRange.split("-").map(Number);
+      result = result.filter((product) => {
+        if (!product.variants || product.variants.length === 0) return false;
+        const prices = product.variants.map((v) => parseFloat(v.price));
+        const minPrice = Math.min(...prices);
+        return minPrice >= min && minPrice <= max;
+      });
+    }
+
+    // Apply sorting
+    switch (filters.sortBy) {
+      case "price-low-high":
+        result.sort((a, b) => {
+          const aPrice =
+            a.variants && a.variants.length > 0
+              ? Math.min(...a.variants.map((v) => parseFloat(v.price)))
+              : 0;
+          const bPrice =
+            b.variants && b.variants.length > 0
+              ? Math.min(...b.variants.map((v) => parseFloat(v.price)))
+              : 0;
+          return aPrice - bPrice;
+        });
+        break;
+      case "price-high-low":
+        result.sort((a, b) => {
+          const aPrice =
+            a.variants && a.variants.length > 0
+              ? Math.min(...a.variants.map((v) => parseFloat(v.price)))
+              : 0;
+          const bPrice =
+            b.variants && b.variants.length > 0
+              ? Math.min(...b.variants.map((v) => parseFloat(v.price)))
+              : 0;
+          return bPrice - aPrice;
+        });
+        break;
+      case "name-asc":
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "name-desc":
+        result.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      default:
+        break;
+    }
+
+    setFilteredProducts(result);
+    setCurrentPage(1); // Reset to first page when filters change
   };
 
   const handleFilterChange = (e) => {
@@ -221,8 +296,11 @@ const AdminProducts = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const currentItems = filteredProducts.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const nextPage = () =>
@@ -245,19 +323,19 @@ const AdminProducts = () => {
 
   return (
     <div className="admin-products">
-      <div className="products-header">
+      <div className="admin-products-header">
         <h1>Product Management</h1>
         <button
-          className="back-btn"
+          className="admin-back-btn"
           onClick={() => navigate("/admin/dashboard")}
         >
           ← Back to Dashboard
         </button>
       </div>
 
-      <div className="mobile-filter-btn-container">
-        <button className="mobile-filter-btn" onClick={toggleFilterMenu}>
-          <span className="hamburger-icon">
+      <div className="admin-mobile-filter-btn-container">
+        <button className="admin-mobile-filter-btn" onClick={toggleFilterMenu}>
+          <span className="admin-hamburger-icon">
             <span></span>
             <span></span>
             <span></span>
@@ -266,8 +344,10 @@ const AdminProducts = () => {
         </button>
       </div>
 
-      <div className={`filters-section ${isFilterMenuOpen ? "open" : ""}`}>
-        <div className="filter-group">
+      <div
+        className={`admin-filters-section ${isFilterMenuOpen ? "open" : ""}`}
+      >
+        <div className="admin-filter-group">
           <label htmlFor="category-filter">Category:</label>
           <select
             id="category-filter"
@@ -284,7 +364,7 @@ const AdminProducts = () => {
           </select>
         </div>
 
-        <div className="filter-group">
+        <div className="admin-filter-group">
           <label htmlFor="search-filter">Search:</label>
           <input
             type="text"
@@ -296,7 +376,7 @@ const AdminProducts = () => {
           />
         </div>
 
-        <div className="filter-group">
+        <div className="admin-filter-group">
           <label htmlFor="price-filter">Price Range:</label>
           <select
             id="price-filter"
@@ -312,7 +392,7 @@ const AdminProducts = () => {
           </select>
         </div>
 
-        <div className="filter-group">
+        <div className="admin-filter-group">
           <label htmlFor="sort-filter">Sort By:</label>
           <select
             id="sort-filter"
@@ -328,25 +408,28 @@ const AdminProducts = () => {
           </select>
         </div>
 
-        <button className="reset-filters-btn" onClick={resetFilters}>
+        <button className="admin-reset-filters-btn" onClick={resetFilters}>
           Reset Filters
         </button>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="admin-error-message">{error}</div>}
 
-      <div className="products-list">
-        {isLoading && products.length === 0 ? (
-          <div className="loading">Loading products...</div>
-        ) : products.length === 0 ? (
-          <div className="no-products">No products found</div>
+      <div className="admin-products-list">
+        {isLoading && filteredProducts.length === 0 ? (
+          <div className="admin-loading">Loading products...</div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="admin-no-products">No products found</div>
         ) : (
           currentItems.map((product) => (
-            <div key={product.id} className="product-row">
+            <div key={product.id} className="admin-product-row">
               {editingProduct === product.id ? (
-                <form onSubmit={handleUpdateProduct} className="edit-form">
-                  <div className="form-row">
-                    <div className="form-group">
+                <form
+                  onSubmit={handleUpdateProduct}
+                  className="admin-edit-form"
+                >
+                  <div className="admin-form-row">
+                    <div className="admin-form-group">
                       <label>Product Name</label>
                       <input
                         type="text"
@@ -357,7 +440,7 @@ const AdminProducts = () => {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className="admin-form-group">
                       <label>Category</label>
                       <select
                         name="category"
@@ -374,7 +457,7 @@ const AdminProducts = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
+                  <div className="admin-form-group">
                     <label>Description</label>
                     <textarea
                       name="description"
@@ -385,7 +468,7 @@ const AdminProducts = () => {
                     ></textarea>
                   </div>
 
-                  <div className="form-group">
+                  <div className="admin-form-group">
                     <label>Product Image</label>
                     <input
                       type="file"
@@ -393,40 +476,40 @@ const AdminProducts = () => {
                       onChange={handleEditChange}
                       accept="image/*"
                     />
-                    <p className="image-hint">
+                    <p className="admin-image-hint">
                       Leave empty to keep current image
                     </p>
                   </div>
 
-                  <div className="variants-section">
-                    <div className="variants-header">
+                  <div className="admin-variants-section">
+                    <div className="admin-variants-header">
                       <h3>Product Variants</h3>
                       {variants.length < 5 && (
                         <button
                           type="button"
                           onClick={addVariant}
-                          className="add-variant-btn"
+                          className="admin-add-variant-btn"
                         >
                           + Add Variant
                         </button>
                       )}
                     </div>
 
-                    <div className="variants-list">
+                    <div className="admin-variants-list">
                       {variants.map((variant, index) => (
-                        <div key={index} className="variant-item">
+                        <div key={index} className="admin-variant-item">
                           {variants.length > 1 && (
                             <button
                               type="button"
                               onClick={() => removeVariant(index)}
-                              className="remove-variant-btn"
+                              className="admin-remove-variant-btn"
                               aria-label="Remove variant"
                             >
                               ×
                             </button>
                           )}
-                          <div className="variant-content">
-                            <div className="variant-field">
+                          <div className="admin-variant-content">
+                            <div className="admin-variant-field">
                               <label>Variant Name</label>
                               <input
                                 type="text"
@@ -443,7 +526,7 @@ const AdminProducts = () => {
                               />
                             </div>
 
-                            <div className="variant-field">
+                            <div className="admin-variant-field">
                               <label>Price ($)</label>
                               <input
                                 type="number"
@@ -462,7 +545,7 @@ const AdminProducts = () => {
                               />
                             </div>
 
-                            <div className="variant-field">
+                            <div className="admin-variant-field">
                               <label>Stock</label>
                               <input
                                 type="number"
@@ -485,7 +568,7 @@ const AdminProducts = () => {
                     </div>
                   </div>
 
-                  <div className="edit-actions">
+                  <div className="admin-edit-actions">
                     <button type="submit" disabled={isLoading}>
                       Save
                     </button>
@@ -496,40 +579,45 @@ const AdminProducts = () => {
                 </form>
               ) : (
                 <>
-                  <div className="product-row-content">
-                    <div className="product-image">
+                  <div className="admin-product-row-content">
+                    <div className="admin-product-image">
                       <img
                         src={product.image || "https://via.placeholder.com/200"}
                         alt={product.name}
                       />
                     </div>
-                    <div className="product-info">
+                    <div className="admin-product-info">
                       <h3>{product.name}</h3>
-                      <p className="product-category">
+                      <p className="admin-product-category">
                         {categories.find((c) => c.id === product.category)
                           ?.name || "Unknown"}
                       </p>
-                      <div className="product-variants">
+                      <div className="admin-product-variants">
                         {product.variants && product.variants.length > 0 ? (
                           product.variants.map((variant) => (
-                            <div key={variant.id} className="variant-info">
-                              <span className="variant-name">
+                            <div
+                              key={variant.id}
+                              className="admin-variant-info"
+                            >
+                              <span className="admin-variant-name">
                                 {variant.name}
                               </span>
-                              <span className="variant-price">
+                              <span className="admin-variant-price">
                                 ${parseFloat(variant.price).toFixed(2)}
                               </span>
-                              <span className="variant-stock">
+                              <span className="admin-variant-stock">
                                 Stock: {variant.stock}
                               </span>
                             </div>
                           ))
                         ) : (
-                          <p className="no-variants">No variants available</p>
+                          <p className="admin-no-variants">
+                            No variants available
+                          </p>
                         )}
                       </div>
                     </div>
-                    <div className="product-actions">
+                    <div className="admin-product-actions">
                       <button onClick={() => startEditing(product)}>
                         Edit
                       </button>
@@ -547,22 +635,22 @@ const AdminProducts = () => {
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="pagination-container">
+        <div className="admin-pagination-container">
           <button
             onClick={prevPage}
             disabled={currentPage === 1}
-            className="pagination-btn"
+            className="admin-pagination-btn"
           >
             &laquo; Previous
           </button>
 
-          <div className="page-numbers">
+          <div className="admin-page-numbers">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(
               (number) => (
                 <button
                   key={number}
                   onClick={() => paginate(number)}
-                  className={`page-number ${
+                  className={`admin-page-number ${
                     currentPage === number ? "active" : ""
                   }`}
                 >
@@ -575,7 +663,7 @@ const AdminProducts = () => {
           <button
             onClick={nextPage}
             disabled={currentPage === totalPages}
-            className="pagination-btn"
+            className="admin-pagination-btn"
           >
             Next &raquo;
           </button>
@@ -583,7 +671,7 @@ const AdminProducts = () => {
       )}
 
       <button
-        className="fab"
+        className="admin-fab"
         onClick={() => navigate("/admin/add-product")}
         title="Add Product"
       >
