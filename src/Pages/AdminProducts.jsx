@@ -14,7 +14,15 @@ const AdminProducts = () => {
   const [filters, setFilters] = useState({
     category: "",
     search: "",
+    priceRange: "all",
+    sortBy: "default",
   });
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -210,6 +218,31 @@ const AdminProducts = () => {
     setVariants([]);
   };
 
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
+  const toggleFilterMenu = () => {
+    setIsFilterMenuOpen(!isFilterMenuOpen);
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      category: "",
+      search: "",
+      priceRange: "all",
+      sortBy: "default",
+    });
+    setIsFilterMenuOpen(false);
+  };
+
   return (
     <div className="admin-products">
       <div className="products-header">
@@ -222,9 +255,22 @@ const AdminProducts = () => {
         </button>
       </div>
 
-      <div className="filters">
+      <div className="mobile-filter-btn-container">
+        <button className="mobile-filter-btn" onClick={toggleFilterMenu}>
+          <span className="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          Filters
+        </button>
+      </div>
+
+      <div className={`filters-section ${isFilterMenuOpen ? "open" : ""}`}>
         <div className="filter-group">
+          <label htmlFor="category-filter">Category:</label>
           <select
+            id="category-filter"
             name="category"
             value={filters.category}
             onChange={handleFilterChange}
@@ -237,54 +283,95 @@ const AdminProducts = () => {
             ))}
           </select>
         </div>
+
         <div className="filter-group">
+          <label htmlFor="search-filter">Search:</label>
           <input
             type="text"
+            id="search-filter"
             name="search"
             value={filters.search}
             onChange={handleFilterChange}
             placeholder="Search products..."
           />
         </div>
+
+        <div className="filter-group">
+          <label htmlFor="price-filter">Price Range:</label>
+          <select
+            id="price-filter"
+            name="priceRange"
+            value={filters.priceRange}
+            onChange={handleFilterChange}
+          >
+            <option value="all">All Prices</option>
+            <option value="0-25">Under $25</option>
+            <option value="25-50">$25 - $50</option>
+            <option value="50-100">$50 - $100</option>
+            <option value="100-1000">Over $100</option>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="sort-filter">Sort By:</label>
+          <select
+            id="sort-filter"
+            name="sortBy"
+            value={filters.sortBy}
+            onChange={handleFilterChange}
+          >
+            <option value="default">Default</option>
+            <option value="price-low-high">Price: Low to High</option>
+            <option value="price-high-low">Price: High to Low</option>
+            <option value="name-asc">Name: A-Z</option>
+            <option value="name-desc">Name: Z-A</option>
+          </select>
+        </div>
+
+        <button className="reset-filters-btn" onClick={resetFilters}>
+          Reset Filters
+        </button>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
-      <div className="products-grid">
+      <div className="products-list">
         {isLoading && products.length === 0 ? (
           <div className="loading">Loading products...</div>
         ) : products.length === 0 ? (
           <div className="no-products">No products found</div>
         ) : (
-          products.map((product) => (
-            <div key={product.id} className="product-card">
+          currentItems.map((product) => (
+            <div key={product.id} className="product-row">
               {editingProduct === product.id ? (
                 <form onSubmit={handleUpdateProduct} className="edit-form">
-                  <div className="form-group">
-                    <label>Product Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={editForm.name}
-                      onChange={handleEditChange}
-                      required
-                    />
-                  </div>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Product Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={editForm.name}
+                        onChange={handleEditChange}
+                        required
+                      />
+                    </div>
 
-                  <div className="form-group">
-                    <label>Category</label>
-                    <select
-                      name="category"
-                      value={editForm.category}
-                      onChange={handleEditChange}
-                      required
-                    >
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="form-group">
+                      <label>Category</label>
+                      <select
+                        name="category"
+                        value={editForm.category}
+                        onChange={handleEditChange}
+                        required
+                      >
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   <div className="form-group">
@@ -409,41 +496,47 @@ const AdminProducts = () => {
                 </form>
               ) : (
                 <>
-                  <div className="product-image">
-                    <img
-                      src={product.image || "https://via.placeholder.com/200"}
-                      alt={product.name}
-                    />
-                  </div>
-                  <div className="product-info">
-                    <h3>{product.name}</h3>
-                    <p className="product-category">
-                      {categories.find((c) => c.id === product.category)
-                        ?.name || "Unknown"}
-                    </p>
-                    <div className="product-variants">
-                      {product.variants && product.variants.length > 0 ? (
-                        product.variants.map((variant) => (
-                          <div key={variant.id} className="variant-info">
-                            <span className="variant-name">{variant.name}</span>
-                            <span className="variant-price">
-                              ${parseFloat(variant.price).toFixed(2)}
-                            </span>
-                            <span className="variant-stock">
-                              Stock: {variant.stock}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="no-variants">No variants available</p>
-                      )}
+                  <div className="product-row-content">
+                    <div className="product-image">
+                      <img
+                        src={product.image || "https://via.placeholder.com/200"}
+                        alt={product.name}
+                      />
                     </div>
-                  </div>
-                  <div className="product-actions">
-                    <button onClick={() => startEditing(product)}>Edit</button>
-                    <button onClick={() => handleDeleteProduct(product.id)}>
-                      Delete
-                    </button>
+                    <div className="product-info">
+                      <h3>{product.name}</h3>
+                      <p className="product-category">
+                        {categories.find((c) => c.id === product.category)
+                          ?.name || "Unknown"}
+                      </p>
+                      <div className="product-variants">
+                        {product.variants && product.variants.length > 0 ? (
+                          product.variants.map((variant) => (
+                            <div key={variant.id} className="variant-info">
+                              <span className="variant-name">
+                                {variant.name}
+                              </span>
+                              <span className="variant-price">
+                                ${parseFloat(variant.price).toFixed(2)}
+                              </span>
+                              <span className="variant-stock">
+                                Stock: {variant.stock}
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="no-variants">No variants available</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="product-actions">
+                      <button onClick={() => startEditing(product)}>
+                        Edit
+                      </button>
+                      <button onClick={() => handleDeleteProduct(product.id)}>
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </>
               )}
@@ -451,6 +544,43 @@ const AdminProducts = () => {
           ))
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pagination-container">
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 1}
+            className="pagination-btn"
+          >
+            &laquo; Previous
+          </button>
+
+          <div className="page-numbers">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              (number) => (
+                <button
+                  key={number}
+                  onClick={() => paginate(number)}
+                  className={`page-number ${
+                    currentPage === number ? "active" : ""
+                  }`}
+                >
+                  {number}
+                </button>
+              )
+            )}
+          </div>
+
+          <button
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+            className="pagination-btn"
+          >
+            Next &raquo;
+          </button>
+        </div>
+      )}
 
       <button
         className="fab"
