@@ -9,7 +9,7 @@ const AgeVerification = () => {
   const handleSubmit = () => {
     if (age === "over18") {
       localStorage.setItem("ageVerified", "true");
-      navigate("/");
+      navigate("/shop");
     } else if (age === "under18") {
       alert("Sorry, you must be at least 18 to access this site.");
     } else {
