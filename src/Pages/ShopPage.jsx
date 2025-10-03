@@ -13,7 +13,7 @@ const ShopPage = () => {
   const [filters, setFilters] = useState({
     category: "all",
     priceRange: "all",
-    sortBy: "default",
+    sortBy: "popularity", // Changed default to popularity
   });
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
 
@@ -143,6 +143,15 @@ const ShopPage = () => {
     }
 
     switch (filters.sortBy) {
+      case "popularity":
+        // Sort by is_popular (true first) and then by name
+        result.sort((a, b) => {
+          if (a.is_popular === b.is_popular) {
+            return (a.name || "").localeCompare(b.name || "");
+          }
+          return a.is_popular ? -1 : 1;
+        });
+        break;
       case "price-low-high":
         result.sort((a, b) => {
           if (!Array.isArray(a.variants) || !Array.isArray(b.variants))
@@ -176,6 +185,7 @@ const ShopPage = () => {
         result.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
         break;
       default:
+        // Default sorting (backend default: popularity first, then name)
         break;
     }
 
@@ -258,7 +268,7 @@ const ShopPage = () => {
     setFilters({
       category: "all",
       priceRange: "all",
-      sortBy: "default",
+      sortBy: "popularity", // Reset to popularity
     });
     setIsFilterMenuOpen(false);
   };
@@ -333,6 +343,7 @@ const ShopPage = () => {
             value={filters.sortBy}
             onChange={handleFilterChange}
           >
+            <option value="popularity">Popularity</option>
             <option value="default">Default</option>
             <option value="price-low-high">Price: Low to High</option>
             <option value="price-high-low">Price: High to Low</option>
@@ -360,6 +371,10 @@ const ShopPage = () => {
 
             return (
               <div key={item.id} className="product-card">
+                {/* Popular badge */}
+                {item.is_popular && (
+                  <div className="popular-badge">Popular</div>
+                )}
                 <img
                   src={item.image || "https://via.placeholder.com/150"}
                   alt={item.name || "Product"}
@@ -479,6 +494,10 @@ const ShopPage = () => {
                   <p className="modal-product-category">
                     {selectedProduct.category_name || "Unknown"}
                   </p>
+                  {/* Popular badge in modal */}
+                  {selectedProduct.is_popular && (
+                    <span className="popular-badge">Popular</span>
+                  )}
                 </div>
               </div>
 
