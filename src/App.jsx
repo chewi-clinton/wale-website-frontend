@@ -66,14 +66,31 @@ function App() {
             <main>
               <Routes>
                 <Route path="/age-check" element={<AgeVerification />} />
+
+                {/* Routes that don't require age verification */}
+                <Route path="/" element={<Home />} />
+                <Route path="/about-us" element={<AboutPage />} />
+                <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+                <Route path="/shippingpolicy" element={<ShippingPolicy />} />
                 <Route
-                  path="/"
+                  path="/refundandreturn"
+                  element={<RefundAndReturnsPolicy />}
+                />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:id" element={<BlogPost />} />
+                <Route
+                  path="/faq"
                   element={
-                    <ProtectedRoute>
-                      <Home />
-                    </ProtectedRoute>
+                    <div className="faq-page">
+                      <div className="container">
+                        <h1>Frequently Asked Questions</h1>
+                        <p>FAQ content coming soon...</p>
+                      </div>
+                    </div>
                   }
                 />
+
+                {/* Routes that require age verification */}
                 <Route
                   path="/shop"
                   element={
@@ -99,26 +116,10 @@ function App() {
                   }
                 />
                 <Route
-                  path="/privacypolicy"
-                  element={
-                    <ProtectedRoute>
-                      <PrivacyPolicy />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
                   path="/checkout"
                   element={
                     <ProtectedRoute>
                       <CheckoutPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/about-us"
-                  element={
-                    <ProtectedRoute>
-                      <AboutPage />
                     </ProtectedRoute>
                   }
                 />
@@ -155,55 +156,10 @@ function App() {
                   }
                 />
                 <Route
-                  path="/shippingpolicy"
-                  element={
-                    <ProtectedRoute>
-                      <ShippingPolicy />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/refundandreturn"
-                  element={
-                    <ProtectedRoute>
-                      <RefundAndReturnsPolicy />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
                   path="/order-confirmation"
                   element={
                     <ProtectedRoute>
                       <OrderConfirmationPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/blog"
-                  element={
-                    <ProtectedRoute>
-                      <Blog />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/blog/:id"
-                  element={
-                    <ProtectedRoute>
-                      <BlogPost />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/faq"
-                  element={
-                    <ProtectedRoute>
-                      <div className="faq-page">
-                        <div className="container">
-                          <h1>Frequently Asked Questions</h1>
-                          <p>FAQ content coming soon...</p>
-                        </div>
-                      </div>
                     </ProtectedRoute>
                   }
                 />
