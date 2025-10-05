@@ -17,4 +17,4 @@ services:
 
 networks:
   backend_proxy_net:
-    driver: bridge
+    external: true
