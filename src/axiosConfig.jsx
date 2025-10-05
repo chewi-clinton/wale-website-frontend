@@ -2,8 +2,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://91.98.150.156:8080/",
-  //baseURL: "https://backend.trimaxapharmacy.com",
+  baseURL: "https://backend.trimaxapharmacy.com",
   headers: {
     "Content-Type": "application/json",
   },
@@ -50,8 +49,7 @@ instance.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          "http://91.98.150.156:8080//api/token/refresh/",
-          // "https://backend.trimaxapharmacy.com/api/token/refresh/",
+          "https://backend.trimaxapharmacy.com/api/token/refresh/",
           {
             refresh: refreshToken,
           }
