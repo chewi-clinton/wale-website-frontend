@@ -1,8 +1,8 @@
 services:
   web:
-    name: frontend
     build:
       context: .
+      container_name: frontend
       dockerfile: Dockerfile
     ports:
       - "8081:80"
