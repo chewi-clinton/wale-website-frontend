@@ -490,10 +490,6 @@ const ShopPage = () => {
                   <p className="modal-product-category">
                     {selectedProduct.category_name || "Unknown"}
                   </p>
-                  {/* Popular badge in modal */}
-                  {selectedProduct.is_popular && (
-                    <span className="popular-badge">Popular</span>
-                  )}
                 </div>
               </div>
 
