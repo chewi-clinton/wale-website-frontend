@@ -371,10 +371,6 @@ const ShopPage = () => {
 
             return (
               <div key={item.id} className="product-card">
-                {/* Popular badge */}
-                {item.is_popular && (
-                  <div className="popular-badge">Popular</div>
-                )}
                 <img
                   src={item.image || "https://via.placeholder.com/150"}
                   alt={item.name || "Product"}
